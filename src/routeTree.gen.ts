@@ -9,13 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as LegalRouteImport } from './routes/legal'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
+import { Route as LegalTermsRouteImport } from './routes/legal.terms'
+import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
+import { Route as LegalDataPracticesRouteImport } from './routes/legal.data-practices'
+import { Route as LegalCreditDisclosureRouteImport } from './routes/legal.credit-disclosure'
+import { Route as LegalCookiesRouteImport } from './routes/legal.cookies'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartnersRoute = PartnersRouteImport.update({
   id: '/partners',
   path: '/partners',
@@ -24,6 +42,11 @@ const PartnersRoute = PartnersRouteImport.update({
 const MarketplaceRoute = MarketplaceRouteImport.update({
   id: '/marketplace',
   path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -46,21 +69,62 @@ const MarketplaceIdRoute = MarketplaceIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => MarketplaceRoute,
 } as any)
+const LegalTermsRoute = LegalTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => LegalRoute,
+} as any)
+const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => LegalRoute,
+} as any)
+const LegalDataPracticesRoute = LegalDataPracticesRouteImport.update({
+  id: '/data-practices',
+  path: '/data-practices',
+  getParentRoute: () => LegalRoute,
+} as any)
+const LegalCreditDisclosureRoute = LegalCreditDisclosureRouteImport.update({
+  id: '/credit-disclosure',
+  path: '/credit-disclosure',
+  getParentRoute: () => LegalRoute,
+} as any)
+const LegalCookiesRoute = LegalCookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => LegalRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
+  '/legal/data-practices': typeof LegalDataPracticesRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/terms': typeof LegalTermsRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
+  '/legal/data-practices': typeof LegalDataPracticesRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/terms': typeof LegalTermsRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
 }
 export interface FileRoutesById {
@@ -68,8 +132,16 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
+  '/legal/data-practices': typeof LegalDataPracticesRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/terms': typeof LegalTermsRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
 }
 export interface FileRouteTypes {
@@ -78,24 +150,48 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/legal'
     | '/marketplace'
     | '/partners'
+    | '/sign-in'
+    | '/sign-up'
+    | '/legal/cookies'
+    | '/legal/credit-disclosure'
+    | '/legal/data-practices'
+    | '/legal/privacy'
+    | '/legal/terms'
     | '/marketplace/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
+    | '/legal'
     | '/marketplace'
     | '/partners'
+    | '/sign-in'
+    | '/sign-up'
+    | '/legal/cookies'
+    | '/legal/credit-disclosure'
+    | '/legal/data-practices'
+    | '/legal/privacy'
+    | '/legal/terms'
     | '/marketplace/$id'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/contact'
+    | '/legal'
     | '/marketplace'
     | '/partners'
+    | '/sign-in'
+    | '/sign-up'
+    | '/legal/cookies'
+    | '/legal/credit-disclosure'
+    | '/legal/data-practices'
+    | '/legal/privacy'
+    | '/legal/terms'
     | '/marketplace/$id'
   fileRoutesById: FileRoutesById
 }
@@ -103,12 +199,29 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  LegalRoute: typeof LegalRouteWithChildren
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   PartnersRoute: typeof PartnersRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/partners': {
       id: '/partners'
       path: '/partners'
@@ -121,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/marketplace'
       fullPath: '/marketplace'
       preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -151,8 +271,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketplaceIdRouteImport
       parentRoute: typeof MarketplaceRoute
     }
+    '/legal/terms': {
+      id: '/legal/terms'
+      path: '/terms'
+      fullPath: '/legal/terms'
+      preLoaderRoute: typeof LegalTermsRouteImport
+      parentRoute: typeof LegalRoute
+    }
+    '/legal/privacy': {
+      id: '/legal/privacy'
+      path: '/privacy'
+      fullPath: '/legal/privacy'
+      preLoaderRoute: typeof LegalPrivacyRouteImport
+      parentRoute: typeof LegalRoute
+    }
+    '/legal/data-practices': {
+      id: '/legal/data-practices'
+      path: '/data-practices'
+      fullPath: '/legal/data-practices'
+      preLoaderRoute: typeof LegalDataPracticesRouteImport
+      parentRoute: typeof LegalRoute
+    }
+    '/legal/credit-disclosure': {
+      id: '/legal/credit-disclosure'
+      path: '/credit-disclosure'
+      fullPath: '/legal/credit-disclosure'
+      preLoaderRoute: typeof LegalCreditDisclosureRouteImport
+      parentRoute: typeof LegalRoute
+    }
+    '/legal/cookies': {
+      id: '/legal/cookies'
+      path: '/cookies'
+      fullPath: '/legal/cookies'
+      preLoaderRoute: typeof LegalCookiesRouteImport
+      parentRoute: typeof LegalRoute
+    }
   }
 }
+
+interface LegalRouteChildren {
+  LegalCookiesRoute: typeof LegalCookiesRoute
+  LegalCreditDisclosureRoute: typeof LegalCreditDisclosureRoute
+  LegalDataPracticesRoute: typeof LegalDataPracticesRoute
+  LegalPrivacyRoute: typeof LegalPrivacyRoute
+  LegalTermsRoute: typeof LegalTermsRoute
+}
+
+const LegalRouteChildren: LegalRouteChildren = {
+  LegalCookiesRoute: LegalCookiesRoute,
+  LegalCreditDisclosureRoute: LegalCreditDisclosureRoute,
+  LegalDataPracticesRoute: LegalDataPracticesRoute,
+  LegalPrivacyRoute: LegalPrivacyRoute,
+  LegalTermsRoute: LegalTermsRoute,
+}
+
+const LegalRouteWithChildren = LegalRoute._addFileChildren(LegalRouteChildren)
 
 interface MarketplaceRouteChildren {
   MarketplaceIdRoute: typeof MarketplaceIdRoute
@@ -170,8 +343,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  LegalRoute: LegalRouteWithChildren,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   PartnersRoute: PartnersRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
