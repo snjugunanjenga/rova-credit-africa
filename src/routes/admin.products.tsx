@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUGX } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ interface Row {
   image_url: string | null;
   available: boolean;
   sort_order: number;
+  specifications?: Record<string, string> | null;
 }
 
 function AdminProducts() {
@@ -57,6 +58,7 @@ function AdminProducts() {
       image_url: editing.image_url ?? null,
       available: editing.available ?? true,
       sort_order: Number(editing.sort_order ?? 999),
+      specifications: editing.specifications && Object.keys(editing.specifications).length > 0 ? editing.specifications : null,
     };
     const { error } = editing.id
       ? await supabase.from("products").update(payload).eq("id", editing.id)
@@ -68,7 +70,7 @@ function AdminProducts() {
   return (
     <Section title="Products" desc={`${data.length} products in catalog`}>
       <div className="mb-4 flex justify-end">
-        <Button onClick={() => setEditing({ available: true, category: "budget", sort_order: 999 })}>
+        <Button onClick={() => setEditing({ available: true, category: "budget", sort_order: 999, specifications: {} })}>
           <Plus className="mr-2 h-4 w-4" /> New product
         </Button>
       </div>
@@ -115,12 +117,56 @@ function AdminProducts() {
               </div>
               <Field label="Image URL" value={editing.image_url ?? ""} onChange={(v) => setEditing({ ...editing, image_url: v })} />
               <Field label="Sort order" type="number" value={String(editing.sort_order ?? 999)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) })} />
+
+              <SpecsEditor
+                specs={editing.specifications ?? {}}
+                onChange={(s) => setEditing({ ...editing, specifications: s })}
+              />
+
               <Button onClick={save} className="w-full">Save</Button>
             </div>
           )}
         </DialogContent>
       </Dialog>
     </Section>
+  );
+}
+
+function SpecsEditor({ specs, onChange }: { specs: Record<string, string>; onChange: (s: Record<string, string>) => void }) {
+  const entries = useMemo(() => Object.entries(specs), [specs]);
+  const [k, setK] = useState("");
+  const [v, setV] = useState("");
+
+  const add = () => {
+    if (!k.trim()) return;
+    onChange({ ...specs, [k.trim()]: v.trim() });
+    setK(""); setV("");
+  };
+  const remove = (key: string) => {
+    const next = { ...specs };
+    delete next[key];
+    onChange(next);
+  };
+
+  return (
+    <div className="rounded-md border border-border bg-muted/20 p-3">
+      <Label className="text-xs uppercase tracking-wide text-muted-foreground">Detailed specifications</Label>
+      <div className="mt-2 space-y-1">
+        {entries.length === 0 && <p className="text-xs text-muted-foreground">No detailed specs yet.</p>}
+        {entries.map(([key, val]) => (
+          <div key={key} className="flex items-center gap-2 rounded bg-card px-2 py-1 text-sm">
+            <span className="min-w-[100px] font-medium">{key}</span>
+            <span className="flex-1 text-muted-foreground">{val}</span>
+            <Button size="sm" variant="ghost" onClick={() => remove(key)}><X className="h-3 w-3" /></Button>
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 grid grid-cols-[1fr_1fr_auto] gap-2">
+        <Input placeholder="Key (e.g. Battery)" value={k} onChange={(e) => setK(e.target.value)} />
+        <Input placeholder="Value (e.g. 5000 mAh)" value={v} onChange={(e) => setV(e.target.value)} />
+        <Button type="button" size="sm" onClick={add}>Add</Button>
+      </div>
+    </div>
   );
 }
 
