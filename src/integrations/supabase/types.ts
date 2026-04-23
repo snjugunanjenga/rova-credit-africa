@@ -78,60 +78,96 @@ export type Database = {
       }
       leads: {
         Row: {
+          agreement_accepted_at: string | null
+          agreement_signatory_name: string | null
+          agreement_version: string | null
           assigned_to: string | null
+          computed_down_payment: number | null
           consent_given: boolean
           country: string | null
           created_at: string
+          eligibility_down_payment_pct: number | null
+          eligibility_tier: string | null
           email: string | null
+          employment_type: string | null
           full_name: string
           id: string
           id_type: string | null
+          latitude: number | null
+          lead_ref: string | null
+          location_label: string | null
+          longitude: number | null
           message: string | null
           metadata: Json | null
           monthly_income: string | null
           phone: string | null
           product_id: string | null
           product_snapshot: Json | null
+          repayment_cadence: string | null
           source: Database["public"]["Enums"]["lead_source"]
           status: Database["public"]["Enums"]["lead_status"]
           subject: string | null
           updated_at: string
         }
         Insert: {
+          agreement_accepted_at?: string | null
+          agreement_signatory_name?: string | null
+          agreement_version?: string | null
           assigned_to?: string | null
+          computed_down_payment?: number | null
           consent_given?: boolean
           country?: string | null
           created_at?: string
+          eligibility_down_payment_pct?: number | null
+          eligibility_tier?: string | null
           email?: string | null
+          employment_type?: string | null
           full_name: string
           id?: string
           id_type?: string | null
+          latitude?: number | null
+          lead_ref?: string | null
+          location_label?: string | null
+          longitude?: number | null
           message?: string | null
           metadata?: Json | null
           monthly_income?: string | null
           phone?: string | null
           product_id?: string | null
           product_snapshot?: Json | null
+          repayment_cadence?: string | null
           source?: Database["public"]["Enums"]["lead_source"]
           status?: Database["public"]["Enums"]["lead_status"]
           subject?: string | null
           updated_at?: string
         }
         Update: {
+          agreement_accepted_at?: string | null
+          agreement_signatory_name?: string | null
+          agreement_version?: string | null
           assigned_to?: string | null
+          computed_down_payment?: number | null
           consent_given?: boolean
           country?: string | null
           created_at?: string
+          eligibility_down_payment_pct?: number | null
+          eligibility_tier?: string | null
           email?: string | null
+          employment_type?: string | null
           full_name?: string
           id?: string
           id_type?: string | null
+          latitude?: number | null
+          lead_ref?: string | null
+          location_label?: string | null
+          longitude?: number | null
           message?: string | null
           metadata?: Json | null
           monthly_income?: string | null
           phone?: string | null
           product_id?: string | null
           product_snapshot?: Json | null
+          repayment_cadence?: string | null
           source?: Database["public"]["Enums"]["lead_source"]
           status?: Database["public"]["Enums"]["lead_status"]
           subject?: string | null
@@ -172,6 +208,7 @@ export type Database = {
           ram: string | null
           rating: number | null
           sort_order: number
+          specifications: Json | null
           specs: string[] | null
           storage: string | null
           updated_at: string
@@ -193,6 +230,7 @@ export type Database = {
           ram?: string | null
           rating?: number | null
           sort_order?: number
+          specifications?: Json | null
           specs?: string[] | null
           storage?: string | null
           updated_at?: string
@@ -214,6 +252,7 @@ export type Database = {
           ram?: string | null
           rating?: number | null
           sort_order?: number
+          specifications?: Json | null
           specs?: string[] | null
           storage?: string | null
           updated_at?: string
