@@ -27,7 +27,7 @@ const schema = z.object({
   id_type: z.string().optional(),
   monthly_income: z.string().optional(),
   message: z.string().optional(),
-  consent_given: z.literal(true, { errorMap: () => ({ message: "Consent is required" }) }),
+  consent_given: z.literal(true, { message: "Consent is required" }),
 });
 
 type FormValues = z.infer<typeof schema>;

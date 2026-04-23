@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { MessageCircle, Mail, MapPin, Linkedin as LinkedinIcon, Facebook as FacebookIcon, Instagram as InstagramIcon, Twitter as TwitterIcon } from "lucide-react";
+import { MessageCircle, Mail, MapPin, Globe, Share2 } from "lucide-react";
 import { whatsappLink, WHATSAPP_NUMBER_DISPLAY, COMPANY_EMAIL } from "@/lib/format";
 
 export function Footer() {
@@ -87,10 +87,10 @@ export function Footer() {
               </li>
             </ul>
             <div className="mt-4 flex gap-3">
-              <SocialIcon href="#" label="X (Twitter)"><Twitter className="h-4 w-4" /></SocialIcon>
-              <SocialIcon href="#" label="LinkedIn"><Linkedin className="h-4 w-4" /></SocialIcon>
-              <SocialIcon href="#" label="Facebook"><Facebook className="h-4 w-4" /></SocialIcon>
-              <SocialIcon href="#" label="Instagram"><Instagram className="h-4 w-4" /></SocialIcon>
+              <SocialIcon href="#" label="X (Twitter)"><Share2 className="h-4 w-4" /></SocialIcon>
+              <SocialIcon href="#" label="LinkedIn"><Globe className="h-4 w-4" /></SocialIcon>
+              <SocialIcon href="#" label="Facebook"><Globe className="h-4 w-4" /></SocialIcon>
+              <SocialIcon href="#" label="Instagram"><Share2 className="h-4 w-4" /></SocialIcon>
             </div>
           </div>
         </div>
