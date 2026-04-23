@@ -14,16 +14,290 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          path: string | null
+          payload: Json | null
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          path?: string | null
+          payload?: Json | null
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          path?: string | null
+          payload?: Json | null
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      lead_notes: {
+        Row: {
+          author_clerk_id: string | null
+          author_name: string | null
+          body: string
+          created_at: string
+          id: string
+          lead_id: string
+        }
+        Insert: {
+          author_clerk_id?: string | null
+          author_name?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          lead_id: string
+        }
+        Update: {
+          author_clerk_id?: string | null
+          author_name?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          lead_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          consent_given: boolean
+          country: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          id_type: string | null
+          message: string | null
+          metadata: Json | null
+          monthly_income: string | null
+          phone: string | null
+          product_id: string | null
+          product_snapshot: Json | null
+          source: Database["public"]["Enums"]["lead_source"]
+          status: Database["public"]["Enums"]["lead_status"]
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          consent_given?: boolean
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          id_type?: string | null
+          message?: string | null
+          metadata?: Json | null
+          monthly_income?: string | null
+          phone?: string | null
+          product_id?: string | null
+          product_snapshot?: Json | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          consent_given?: boolean
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          id_type?: string | null
+          message?: string | null
+          metadata?: Json | null
+          monthly_income?: string | null
+          phone?: string | null
+          product_id?: string | null
+          product_snapshot?: Json | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          alt_text: string | null
+          asset_model: string | null
+          asset_price: number
+          available: boolean
+          badges: string[] | null
+          brand: string
+          category: Database["public"]["Enums"]["product_category"]
+          created_at: string
+          down_payment: number
+          id: string
+          image_url: string | null
+          name: string
+          price_label: string | null
+          ram: string | null
+          rating: number | null
+          sort_order: number
+          specs: string[] | null
+          storage: string | null
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          asset_model?: string | null
+          asset_price: number
+          available?: boolean
+          badges?: string[] | null
+          brand: string
+          category?: Database["public"]["Enums"]["product_category"]
+          created_at?: string
+          down_payment: number
+          id?: string
+          image_url?: string | null
+          name: string
+          price_label?: string | null
+          ram?: string | null
+          rating?: number | null
+          sort_order?: number
+          specs?: string[] | null
+          storage?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          asset_model?: string | null
+          asset_price?: number
+          available?: boolean
+          badges?: string[] | null
+          brand?: string
+          category?: Database["public"]["Enums"]["product_category"]
+          created_at?: string
+          down_payment?: number
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_label?: string | null
+          ram?: string | null
+          rating?: number | null
+          sort_order?: number
+          specs?: string[] | null
+          storage?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          clerk_user_id: string
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          clerk_user_id: string
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          clerk_user_id?: string
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_any_role: { Args: { _clerk_user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _clerk_user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin_owner" | "developer" | "analyst" | "marketer"
+      lead_source: "marketplace" | "partner" | "direct" | "dsr"
+      lead_status: "new" | "contacted" | "qualified" | "converted" | "lost"
+      product_category: "budget" | "mid-range" | "flagship"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +424,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin_owner", "developer", "analyst", "marketer"],
+      lead_source: ["marketplace", "partner", "direct", "dsr"],
+      lead_status: ["new", "contacted", "qualified", "converted", "lost"],
+      product_category: ["budget", "mid-range", "flagship"],
+    },
   },
 } as const
