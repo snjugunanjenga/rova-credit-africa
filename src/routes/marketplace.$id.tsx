@@ -4,8 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Star, Check, MessageCircle } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { LeadModal } from "@/components/site/LeadModal";
+import { ProductCard, type ProductCardData } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUGX, whatsappLink } from "@/lib/format";
 
@@ -32,6 +39,7 @@ export const Route = createFileRoute("/marketplace/$id")({
 function ProductPage() {
   const { id } = Route.useParams();
   const [open, setOpen] = useState(false);
+  const [applyFor, setApplyFor] = useState<ProductCardData | null>(null);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
@@ -47,6 +55,48 @@ function ProductPage() {
     },
   });
 
+  // Recommendations: same category, then same brand, ±25% price, exclude self.
+  const { data: recommendations = [] } = useQuery({
+    queryKey: ["recommendations", id, product?.category, product?.brand, product?.asset_price],
+    enabled: !!product,
+    queryFn: async () => {
+      if (!product) return [];
+      const minPrice = Math.round(product.asset_price * 0.75);
+      const maxPrice = Math.round(product.asset_price * 1.25);
+      // Try category + price band first
+      const { data: byCategory } = await supabase
+        .from("products")
+        .select("*")
+        .eq("available", true)
+        .eq("category", product.category)
+        .neq("id", product.id)
+        .gte("asset_price", minPrice)
+        .lte("asset_price", maxPrice)
+        .order("sort_order", { ascending: true })
+        .limit(6);
+      let results = byCategory ?? [];
+      if (results.length < 4) {
+        const { data: byBrand } = await supabase
+          .from("products")
+          .select("*")
+          .eq("available", true)
+          .eq("brand", product.brand)
+          .neq("id", product.id)
+          .order("sort_order", { ascending: true })
+          .limit(6);
+        const seen = new Set(results.map((r) => r.id));
+        for (const r of byBrand ?? []) {
+          if (!seen.has(r.id)) {
+            results.push(r);
+            seen.add(r.id);
+          }
+          if (results.length >= 6) break;
+        }
+      }
+      return results.slice(0, 6) as unknown as ProductCardData[];
+    },
+  });
+
   if (isLoading) {
     return (
       <SiteShell>
@@ -55,6 +105,8 @@ function ProductPage() {
     );
   }
   if (!product) return null;
+
+  const detailedSpecs = (product.specifications ?? null) as Record<string, string> | null;
 
   return (
     <SiteShell>
@@ -97,7 +149,7 @@ function ProductPage() {
                 <span className="font-semibold">{formatUGX(product.down_payment)}</span>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                Pay weekly or monthly via MTN MoMo / Airtel Money. Final terms confirmed on application.
+                Pay weekly or daily via MTN MoMo / Airtel Money. Eligibility-based deposit (5%–25%).
               </p>
             </div>
 
@@ -125,9 +177,72 @@ function ProductPage() {
             </div>
           </div>
         </div>
+
+        {/* Full specs accordion */}
+        <section className="mt-12">
+          <h2 className="mb-3 text-xl font-bold">Full specifications</h2>
+          <Accordion type="single" collapsible className="rounded-xl border border-border bg-card">
+            <AccordionItem value="quick">
+              <AccordionTrigger className="px-4">Quick specs</AccordionTrigger>
+              <AccordionContent className="px-4">
+                <ul className="grid gap-1 sm:grid-cols-2">
+                  {(product.specs ?? ["Storage", "RAM"]).map((s: string) => (
+                    <li key={s} className="text-sm">• {s}</li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+            {detailedSpecs && Object.keys(detailedSpecs).length > 0 && (
+              <AccordionItem value="full">
+                <AccordionTrigger className="px-4">Detailed specifications</AccordionTrigger>
+                <AccordionContent className="px-4">
+                  <dl className="grid gap-2 sm:grid-cols-2">
+                    {Object.entries(detailedSpecs).map(([k, v]) => (
+                      <div key={k} className="rounded-md bg-muted/40 p-2 text-sm">
+                        <dt className="text-xs uppercase tracking-wide text-muted-foreground">{k}</dt>
+                        <dd className="font-medium">{String(v)}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+            <AccordionItem value="warranty">
+              <AccordionTrigger className="px-4">Warranty &amp; support</AccordionTrigger>
+              <AccordionContent className="px-4 text-sm text-muted-foreground">
+                12-month manufacturer warranty. Service drop-off at any RovaCredit partner shop in Uganda &amp; Kenya.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </section>
+
+        {/* Recommendations */}
+        {recommendations.length > 0 && (
+          <section className="mt-12">
+            <h2 className="mb-4 text-xl font-bold">You may also like</h2>
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {recommendations.map((r) => (
+                <ProductCard key={r.id} product={r} onApply={setApplyFor} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
-      <LeadModal open={open} onOpenChange={setOpen} productId={product.id} productName={product.name} />
+      <LeadModal
+        open={open}
+        onOpenChange={setOpen}
+        productId={product.id}
+        productName={product.name}
+        productPrice={product.asset_price}
+      />
+      <LeadModal
+        open={!!applyFor}
+        onOpenChange={(o) => { if (!o) setApplyFor(null); }}
+        productId={applyFor?.id}
+        productName={applyFor?.name}
+        productPrice={applyFor?.asset_price}
+      />
     </SiteShell>
   );
 }

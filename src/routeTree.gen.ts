@@ -21,6 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
+import { Route as LegalPartnerAgreementRouteImport } from './routes/legal.partner-agreement'
 import { Route as LegalDataPracticesRouteImport } from './routes/legal.data-practices'
 import { Route as LegalCreditDisclosureRouteImport } from './routes/legal.credit-disclosure'
 import { Route as LegalCookiesRouteImport } from './routes/legal.cookies'
@@ -90,6 +91,11 @@ const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => LegalRoute,
 } as any)
+const LegalPartnerAgreementRoute = LegalPartnerAgreementRouteImport.update({
+  id: '/partner-agreement',
+  path: '/partner-agreement',
+  getParentRoute: () => LegalRoute,
+} as any)
 const LegalDataPracticesRoute = LegalDataPracticesRouteImport.update({
   id: '/data-practices',
   path: '/data-practices',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
   '/legal/data-practices': typeof LegalDataPracticesRoute
+  '/legal/partner-agreement': typeof LegalPartnerAgreementRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
   '/legal/data-practices': typeof LegalDataPracticesRoute
+  '/legal/partner-agreement': typeof LegalPartnerAgreementRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
   '/legal/data-practices': typeof LegalDataPracticesRoute
+  '/legal/partner-agreement': typeof LegalPartnerAgreementRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/legal/cookies'
     | '/legal/credit-disclosure'
     | '/legal/data-practices'
+    | '/legal/partner-agreement'
     | '/legal/privacy'
     | '/legal/terms'
     | '/marketplace/$id'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/legal/cookies'
     | '/legal/credit-disclosure'
     | '/legal/data-practices'
+    | '/legal/partner-agreement'
     | '/legal/privacy'
     | '/legal/terms'
     | '/marketplace/$id'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/legal/cookies'
     | '/legal/credit-disclosure'
     | '/legal/data-practices'
+    | '/legal/partner-agreement'
     | '/legal/privacy'
     | '/legal/terms'
     | '/marketplace/$id'
@@ -365,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalPrivacyRouteImport
       parentRoute: typeof LegalRoute
     }
+    '/legal/partner-agreement': {
+      id: '/legal/partner-agreement'
+      path: '/partner-agreement'
+      fullPath: '/legal/partner-agreement'
+      preLoaderRoute: typeof LegalPartnerAgreementRouteImport
+      parentRoute: typeof LegalRoute
+    }
     '/legal/data-practices': {
       id: '/legal/data-practices'
       path: '/data-practices'
@@ -446,6 +465,7 @@ interface LegalRouteChildren {
   LegalCookiesRoute: typeof LegalCookiesRoute
   LegalCreditDisclosureRoute: typeof LegalCreditDisclosureRoute
   LegalDataPracticesRoute: typeof LegalDataPracticesRoute
+  LegalPartnerAgreementRoute: typeof LegalPartnerAgreementRoute
   LegalPrivacyRoute: typeof LegalPrivacyRoute
   LegalTermsRoute: typeof LegalTermsRoute
 }
@@ -454,6 +474,7 @@ const LegalRouteChildren: LegalRouteChildren = {
   LegalCookiesRoute: LegalCookiesRoute,
   LegalCreditDisclosureRoute: LegalCreditDisclosureRoute,
   LegalDataPracticesRoute: LegalDataPracticesRoute,
+  LegalPartnerAgreementRoute: LegalPartnerAgreementRoute,
   LegalPrivacyRoute: LegalPrivacyRoute,
   LegalTermsRoute: LegalTermsRoute,
 }
@@ -486,3 +507,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

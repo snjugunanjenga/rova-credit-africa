@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { ProductCard } from "@/components/site/ProductCard";
 import type { ProductCardData } from "@/components/site/ProductCard";
+import { LeadModal } from "@/components/site/LeadModal";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -31,6 +32,7 @@ function MarketplacePage() {
   const [search, setSearch] = useState("");
   const [brand, setBrand] = useState("all");
   const [category, setCategory] = useState("all");
+  const [applyFor, setApplyFor] = useState<ProductCardData | null>(null);
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["products"],
@@ -104,11 +106,19 @@ function MarketplacePage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} onApply={setApplyFor} />
             ))}
           </div>
         )}
       </section>
+
+      <LeadModal
+        open={!!applyFor}
+        onOpenChange={(o) => { if (!o) setApplyFor(null); }}
+        productId={applyFor?.id}
+        productName={applyFor?.name}
+        productPrice={applyFor?.asset_price}
+      />
     </SiteShell>
   );
 }

@@ -32,6 +32,7 @@ export function Footer() {
               <li><Link to="/legal/terms" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Terms of Service</Link></li>
               <li><Link to="/legal/cookies" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Cookie Policy</Link></li>
               <li><Link to="/legal/credit-disclosure" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Consumer Credit Disclosure</Link></li>
+              <li><Link to="/legal/partner-agreement" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Sales Partner Agreement</Link></li>
               <li><Link to="/contact" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Complaints &amp; Disputes</Link></li>
             </ul>
             <p className="mt-3 text-xs text-sidebar-foreground/60">
