@@ -11,6 +11,7 @@ const LINKS = [
   { to: "/legal/terms", label: "Terms of Service" },
   { to: "/legal/cookies", label: "Cookie Policy" },
   { to: "/legal/credit-disclosure", label: "Credit Disclosure" },
+  { to: "/legal/partner-agreement", label: "Sales Partner Agreement" },
 ] as const;
 
 function LegalLayout() {

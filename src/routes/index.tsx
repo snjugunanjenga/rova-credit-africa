@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Smartphone, ShieldCheck, Wallet, Users } from "lucide-react";
+import {
+  ArrowRight, Smartphone, ShieldCheck, Wallet, Users,
+  Search as SearchIcon, ClipboardCheck, Banknote, PackageCheck,
+  HandCoins, MessageSquare, Headphones,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/site/SiteShell";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -129,6 +133,49 @@ function HomePage() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="bg-muted/30 py-16">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <h2 className="mb-2 text-center text-3xl font-bold tracking-tight">How it works</h2>
+          <p className="mx-auto mb-10 max-w-2xl text-center text-muted-foreground">
+            From browsing to ringing — typically same day.
+          </p>
+          <div className="grid gap-6 md:grid-cols-4">
+            <Step n={1} Icon={SearchIcon} title="Browse" desc="Pick your phone from 48+ models across Samsung, Tecno, Infinix, iPhone &amp; Xiaomi." />
+            <Step n={2} Icon={ClipboardCheck} title="Apply" desc="2-minute eligibility check — we tell you your deposit % before you submit." />
+            <Step n={3} Icon={Banknote} title="Pay deposit" desc="5%–25% deposit via MTN MoMo or Airtel Money — no bank visit needed." />
+            <Step n={4} Icon={PackageCheck} title="Get your phone" desc="Collect at any partner shop. Repay weekly or daily for up to 12 months." />
+          </div>
+        </div>
+      </section>
+
+      {/* Eligibility banner */}
+      <section className="mx-auto max-w-7xl px-4 py-12 md:px-6">
+        <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-gold/10 p-8 md:p-10">
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="inline-flex items-center rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
+                Transparent eligibility
+              </p>
+              <h3 className="mt-3 text-2xl font-bold">Your deposit is 5% – 25%, based on your profile.</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                We score your income, employment and repayment cadence into 5 transparent tiers. No surprises — you see your deposit and weekly payment before you submit.
+              </p>
+              <div className="mt-4 grid grid-cols-5 gap-2 text-center text-xs font-medium">
+                <Tier label="A" pct="5%" />
+                <Tier label="B" pct="10%" />
+                <Tier label="C" pct="15%" />
+                <Tier label="D" pct="20%" />
+                <Tier label="E" pct="25%" />
+              </div>
+            </div>
+            <Link to="/marketplace">
+              <Button size="lg">Check my eligibility <ArrowRight className="ml-2 h-4 w-4" /></Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Featured */}
       <section className="bg-muted/40 py-16">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -168,17 +215,24 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Partner CTA */}
+      {/* Become a sales partner */}
       <section className="bg-sidebar py-16 text-sidebar-foreground">
-        <div className="mx-auto max-w-5xl px-4 text-center md:px-6">
-          <h2 className="text-3xl font-bold tracking-tight">Are you a retailer or SME?</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sidebar-foreground/80">
-            Offer phone financing to your customers or staff. Partner with RovaCredit Africa and tap into the largest device-credit marketplace in East Africa.
-          </p>
-          <div className="mt-6">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight">Become a sales partner</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sidebar-foreground/80">
+              Run a shop, SACCO or SME? Sell phones on credit on our behalf — get your processing fee in full on the day, collect customer deposits via your MoMo merchant line. We handle credit, collections and support.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <PartnerPerk Icon={HandCoins} title="Paid same day" desc="Full processing fee paid the day each sale is approved." />
+            <PartnerPerk Icon={MessageSquare} title="MoMo deposits" desc="Collect 5%–25% customer deposit via your MoMo merchant line." />
+            <PartnerPerk Icon={Headphones} title="We do the rest" desc="Credit risk, recovery, customer support — all on us. 1-year plans, daily or weekly." />
+          </div>
+          <div className="mt-8 flex justify-center">
             <Link to="/partners">
               <Button size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90">
-                Become a Partner <ArrowRight className="ml-2 h-4 w-4" />
+                Apply to partner <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -196,6 +250,38 @@ function Pillar({ Icon, title, desc }: { Icon: typeof Smartphone; title: string;
       </div>
       <h3 className="font-semibold">{title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+    </div>
+  );
+}
+
+function Step({ n, Icon, title, desc }: { n: number; Icon: typeof Smartphone; title: string; desc: string }) {
+  return (
+    <div className="relative rounded-xl border border-border bg-card p-6 shadow-card">
+      <span className="absolute -top-3 left-6 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
+        Step {n}
+      </span>
+      <Icon className="h-6 w-6 text-primary" />
+      <h3 className="mt-3 font-semibold">{title}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+    </div>
+  );
+}
+
+function Tier({ label, pct }: { label: string; pct: string }) {
+  return (
+    <div className="rounded-md border border-border bg-card px-2 py-3">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">Tier {label}</p>
+      <p className="mt-1 text-lg font-bold text-primary">{pct}</p>
+    </div>
+  );
+}
+
+function PartnerPerk({ Icon, title, desc }: { Icon: typeof Smartphone; title: string; desc: string }) {
+  return (
+    <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/30 p-6">
+      <Icon className="h-6 w-6 text-gold" />
+      <h3 className="mt-3 font-semibold">{title}</h3>
+      <p className="mt-1 text-sm text-sidebar-foreground/80">{desc}</p>
     </div>
   );
 }

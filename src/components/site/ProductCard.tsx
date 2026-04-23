@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Star } from "lucide-react";
+import { Star, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatUGX } from "@/lib/format";
 
 export interface ProductCardData {
@@ -17,14 +18,20 @@ export interface ProductCardData {
   specs: string[] | null;
 }
 
-export function ProductCard({ product }: { product: ProductCardData }) {
+export function ProductCard({
+  product,
+  onApply,
+}: {
+  product: ProductCardData;
+  onApply?: (p: ProductCardData) => void;
+}) {
   return (
-    <Link
-      to="/marketplace/$id"
-      params={{ id: product.id }}
-      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
-    >
-      <div className="relative aspect-square overflow-hidden bg-muted">
+    <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant">
+      <Link
+        to="/marketplace/$id"
+        params={{ id: product.id }}
+        className="relative aspect-square overflow-hidden bg-muted"
+      >
         {product.image_url ? (
           <img
             src={product.image_url}
@@ -50,18 +57,20 @@ export function ProductCard({ product }: { product: ProductCardData }) {
             ))}
           </div>
         )}
-      </div>
+      </Link>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">{product.brand}</p>
-            <h3 className="line-clamp-1 font-semibold text-foreground">{product.name}</h3>
+        <Link to="/marketplace/$id" params={{ id: product.id }} className="block">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">{product.brand}</p>
+              <h3 className="line-clamp-1 font-semibold text-foreground">{product.name}</h3>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Star className="h-3 w-3 fill-gold text-gold" />
+              {product.rating ?? "4.5"}
+            </div>
           </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Star className="h-3 w-3 fill-gold text-gold" />
-            {product.rating ?? "4.5"}
-          </div>
-        </div>
+        </Link>
         {product.specs && product.specs.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {product.specs.slice(0, 3).map((s) => (
@@ -76,8 +85,26 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           <p className="text-xs text-muted-foreground">
             From <span className="font-semibold text-foreground">{formatUGX(product.down_payment)}</span> down · MoMo / Airtel
           </p>
+          {onApply ? (
+            <Button
+              size="sm"
+              className="mt-3 w-full"
+              onClick={(e) => {
+                e.preventDefault();
+                onApply(product);
+              }}
+            >
+              <ShoppingCart className="mr-2 h-4 w-4" /> Buy on Credit
+            </Button>
+          ) : (
+            <Link to="/marketplace/$id" params={{ id: product.id }} className="mt-3 block">
+              <Button size="sm" className="w-full">
+                <ShoppingCart className="mr-2 h-4 w-4" /> Buy on Credit
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
