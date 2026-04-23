@@ -1,111 +1,126 @@
 
-# RovaCredit Africa — Updated Plan (Uganda-First + Footer/Header)
+# RovaCredit — Lead Capture, Geolocation, Recommendations & Partner Program
 
-Building on the approved plan, with these additions tailored to your message.
+Building on the existing footer, marketplace and admin. Footer pages already exist (`/legal/*`, `/about`, `/partners`, `/contact`); this phase wires up the conversion flow and the partner agreement program.
 
-## Header (every public page)
-Sticky top nav with:
-- **Logo** — RovaCredit Africa (left)
-- **Links**: Home · Marketplace · Partners · About · Contact
-- **Right side**: WhatsApp icon (+254 727 291 121) · "Sign In" (Clerk)
-- Mobile: hamburger drawer with same links
+## 1. "Buy on Credit" everywhere on the marketplace
 
-## Footer (every public page)
-Four-column layout with Uganda-first compliance & corporate trust signals:
+- **ProductCard**: add a prominent **"Buy on Credit"** button at the bottom of every card (in addition to the card linking to the detail page). Clicking it opens the lead modal **without leaving the marketplace**.
+- **Product detail page**: keep existing "Buy on Credit" + add a **"View full specs"** accordion (RAM, storage, battery, camera, network, screen, OS, warranty) populated from `products.specs` plus a new `specifications` JSONB column.
+- **Specs schema upgrade** — add `specifications jsonb` (key/value detailed specs) to `products`; admin Products CRUD gets a small key/value editor. Existing 48 seeded products stay valid (column nullable).
 
-**Column 1 — Corporate**
-- About RovaCredit
-- Marketplace
-- Partner With Us
-- Careers
-- Press
+## 2. Lead form upgrade — geolocation + eligibility + richer WhatsApp handoff
 
-**Column 2 — Legal & Data Practices** (Uganda + Kenya compliance)
-- Privacy Policy *(/legal/privacy)* — references **Uganda Data Protection and Privacy Act 2019** + **Kenya Data Protection Act 2019**
-- Data Protection Practices *(/legal/data-practices)* — how we collect, store, share, and let users request/delete their data; named Data Protection Officer
-- Terms of Service *(/legal/terms)*
-- Cookie Policy *(/legal/cookies)* — with consent banner
-- Consumer Credit Disclosure *(/legal/credit-disclosure)*
-- Complaints & Dispute Resolution
+Upgrade `LeadModal` (used by card + detail page):
 
-**Column 3 — Partners & Payments**
-- Partner logos/links: **MTN MoMo**, **Airtel Money**, **MTN Uganda**, **Airtel Uganda**
-- "Powered by mobile money across Uganda & Kenya"
+- **Location detector**: on modal open, request `navigator.geolocation`. If granted, capture `{lat, lng}` and reverse-geocode via free **OpenStreetMap Nominatim** (no key needed) to get a human-readable area (e.g. "Kampala, Central Region"). User can also type their area manually if they decline.
+- **Eligibility mini-quiz** (3 quick fields): monthly income (UGX), employment type (Salaried / Self-employed / Boda / Student / Farmer), preferred repayment cadence (Daily / Weekly / Monthly).
+- **Live eligibility calculator** (client-side, transparent): scores into 5 tiers and shows the user their estimated **down payment % (5% – 25%)** for the selected device before they submit.
 
-**Column 4 — Contact**
-- Kampala HQ address (placeholder), Nairobi office
-- WhatsApp: +254 727 291 121 (click → wa.me)
-- Email: hello@rovacredit.africa
-- Social: X, LinkedIn, Facebook, Instagram
+  Tier logic (illustrative):
+  ```
+  Score = income_band(0-3) + employment_band(0-2) + cadence_band(0-1)
+  Tier A (5%)  : score ≥ 5  → low risk
+  Tier B (10%) : score = 4
+  Tier C (15%) : score = 3
+  Tier D (20%) : score = 2
+  Tier E (25%) : score ≤ 1  → higher risk
+  ```
+  Repayment plan = `(asset_price - down_payment) / weeks` over up to **52 weeks**, plus configurable interest/fees shown as a transparent breakdown.
 
-**Footer bottom strip**
-- © 2026 RovaCredit Africa Ltd
-- Registered in Uganda · URSB Reg. No. (placeholder)
-- **Discreet "Admin" link → `/sign-in`** (admins log in from here)
-- Cookie consent reset link
+- **Submit** writes a richer row into `leads`:
+  - existing fields, plus `latitude`, `longitude`, `location_label`, `eligibility_tier`, `eligibility_down_payment_pct`, `computed_down_payment`, `repayment_cadence`, `employment_type`.
+- **WhatsApp handoff**: after insert, auto-open WhatsApp to **+254 727 291 121** with a pre-filled introductory message:
 
-## Corporate landing page (`/about` upgraded to corporate-grade)
-- Hero: "Financing Africa's Digital Future, One Device at a Time" with photo of Ugandan customer with smartphone
-- **Our Story** — founded in Kampala, expanding across East Africa
-- **Mission & Vision**
-- **Leadership team** — 4 placeholder Ugandan names with roles + photos:
-  - *Nakato Sarah Mukasa* — CEO & Co-founder
-  - *Kato David Ssempa* — CTO & Co-founder
-  - *Achieng Patricia Namugga* — Head of Partnerships
-  - *Okello James Wamala* — Head of Credit Risk
-- **Our partners** — logo grid: MTN MoMo, Airtel Money, MTN Uganda, Airtel Uganda, Stanbic Bank Uganda, Centenary Bank
-- **Compliance & Trust** — UCC licensed, Bank of Uganda compliant (placeholder), GDPR + Uganda DPPA aligned
-- **Coverage map** — Uganda (primary) highlighted; Kenya, Tanzania, Rwanda secondary
-- CTA: Partner with us · Browse marketplace
+  > Hello RovaCredit Africa 👋
+  > I'd like to apply for the **Samsung Galaxy A15 (128GB/4GB)**.
+  > Name: Namugga Christine
+  > Phone: +256 7XX XXX XXX
+  > Location: Ntinda, Kampala (0.3476, 32.6126)
+  > Income band: UGX 300k–600k · Self-employed · Weekly repayments
+  > Eligibility tier: B → estimated 10% down (UGX 48,000)
+  > Lead ref: RC-7F3A
+  > I consent to processing per Uganda DPPA 2019 / Kenya DPA 2019.
 
-## Uganda-first content adjustments
-- **Default currency**: UGX (already in your seed data)
-- **Default country in lead form**: Uganda (Kenya, Tanzania, Rwanda also selectable)
-- **Imagery**: Use African / Ugandan stock photos throughout — hero, testimonials, about page, marketplace lifestyle shots. Sourced from Unsplash collections featuring African subjects (manually vetted URLs).
-- **Mobile money emphasis**: MTN MoMo + Airtel Money badges on every product card + checkout-style lead modal
+  Lead reference (`RC-XXXX`) is generated from the new lead's UUID so ops can trace it.
 
-## Testimonials section (homepage + about page)
-Six testimonials with **real Ugandan names** + photos + business context:
+## 3. Recommendation engine on product detail page
 
-1. **Namugga Christine** — Boutique owner, Owino Market, Kampala — "I got my Samsung A15 with just UGX 147,500 down. My business is on WhatsApp now."
-2. **Ssemwogerere Robert** — Boda boda rider, Wakiso — "RovaCredit gave me a phone when no bank would. I pay weekly through MoMo."
-3. **Akello Grace Lamwaka** — Salon owner, Gulu — "Three phones for my staff on flexible terms. Easiest financing I've used."
-4. **Mukasa Joseph Kintu** — SME retailer, Mbarara — "Partnered with RovaCredit to offer phone financing to my customers. Game changer."
-5. **Nabirye Esther** — University student, Makerere — "Got my A25 5G for school. Pay-as-I-earn from my side hustle."
-6. **Tumusiime Patrick Byaruhanga** — Farmer cooperative leader, Kabale — "We financed 20 phones for our cooperative members. RovaCredit understood us."
+- New "**You may also like**" rail at the bottom of `/marketplace/$id` showing 4–6 similar products.
+- Similarity rules (no ML — deterministic SQL):
+  1. Same `category` first
+  2. Then same `brand`
+  3. Then `asset_price` within ±25% of current product
+  4. Exclude current product, sort by `sort_order`
+- Implemented as a single Supabase query in a `useQuery` keyed by product id.
 
-## New routes added to plan
+## 4. Homepage refresh — new commercial story
+
+- New **"How it works"** strip (4 steps): Browse → Apply (eligibility check) → Pay deposit via MoMo → Get your phone, repay weekly/daily.
+- New **"Eligibility-based down payment 5–25%"** banner with a tier explainer.
+- New **"Become a sales partner"** section right under the partner CTA showing the partner economics:
+  - You receive your **full processing fee on the spot**
+  - You collect the customer **deposit via MoMo**
+  - We handle credit, recovery, and customer support
+  - 1-year repayment plans, daily or weekly
+- Keep existing testimonials & Why-RovaCredit pillars.
+
+## 5. Partner program — agreement & onboarding
+
+Upgrade `/partners` from a single intake form into a 3-step flow:
+
+- **Step 1 — Pitch & economics**: revenue split, payout flow, MoMo deposit collection, exclusive territory option, training & POS materials.
+- **Step 2 — Application form**: existing fields + business location (geolocation prefilled), TIN/registration number, average foot traffic, owner's national ID number, MoMo merchant code (optional).
+- **Step 3 — Partner Agreement**: scrollable agreement text in a card with checkbox "I have read and agree to the RovaCredit Sales Partner Agreement." Signature capture = typed full name + date acknowledged. On submit, lead row stores `agreement_accepted_at`, `agreement_version = "v1.0"`, `agreement_signatory_name`.
+- New route **`/legal/partner-agreement`** with full agreement text (template, with reviewable-by-counsel notice).
+- Footer gets a new link under **Corporate** → "Sales Partner Agreement".
+- Admin **Leads** view gains a **"Partner applications"** filter showing only `source='partner'`, with agreement status column and a "View agreement snapshot" drawer.
+
+## 6. Database changes (one migration)
+
 ```
-src/routes/
-  index.tsx                      → home (with new testimonials section)
-  marketplace.tsx                → catalog
-  marketplace.$id.tsx            → product detail
-  partners.tsx                   → partner onboarding
-  about.tsx                      → corporate landing (upgraded)
-  contact.tsx                    → contact form
-  legal.privacy.tsx              → Privacy Policy (Uganda DPPA + Kenya DPA)
-  legal.data-practices.tsx       → Data Protection Practices + DPO contact
-  legal.terms.tsx                → Terms of Service
-  legal.cookies.tsx              → Cookie Policy
-  legal.credit-disclosure.tsx    → Consumer Credit Disclosure
-  sign-in.tsx / sign-up.tsx      → Clerk auth (admin entry from footer)
-  admin/*                        → role-gated command center (unchanged from prior plan)
+ALTER TABLE products ADD COLUMN specifications jsonb;
+
+ALTER TABLE leads
+  ADD COLUMN latitude double precision,
+  ADD COLUMN longitude double precision,
+  ADD COLUMN location_label text,
+  ADD COLUMN eligibility_tier text,
+  ADD COLUMN eligibility_down_payment_pct numeric,
+  ADD COLUMN computed_down_payment numeric,
+  ADD COLUMN repayment_cadence text,
+  ADD COLUMN employment_type text,
+  ADD COLUMN agreement_version text,
+  ADD COLUMN agreement_accepted_at timestamptz,
+  ADD COLUMN agreement_signatory_name text,
+  ADD COLUMN lead_ref text GENERATED ALWAYS AS ('RC-' || upper(substr(id::text,1,4))) STORED;
 ```
 
-## Compliance specifics implemented
-- **Cookie consent banner** (bottom-fixed) with Accept / Reject / Customize — gates analytics cookies until consent given
-- **Lead form** includes explicit DPPA-compliant consent checkbox: *"I consent to RovaCredit Africa processing my personal data per the Uganda Data Protection and Privacy Act 2019 and Kenya Data Protection Act 2019."*
-- **Data subject rights page** — request access, correction, deletion, portability via form (creates a `data_request` lead with `source='dsr'`)
-- **Named DPO** placeholder on data-practices page with email `dpo@rovacredit.africa`
+RLS policies unchanged (insert remains public for `leads`; reads stay role-gated).
 
-## Everything else from the prior approved plan stays the same
-- Clerk frontend-only auth, admin login via footer link → `/sign-in`
-- Lovable Cloud Supabase for products, leads, profiles, user_roles (4 roles), RLS
-- Catalog seeded with all 30 Samsung devices you provided + ~20 popular Tecno/Infinix/iPhone/Xiaomi models, Drive image URLs auto-converted
-- WhatsApp +254 727 291 121 wired into every CTA + floating button
-- Admin command center: dashboard, products CRUD, leads pipeline, analytics, users & roles, system status
+## 7. Files touched
 
-## Out of scope (this build)
-- Live MoMo/Airtel Money payment APIs (lead-only flow; partner logos shown for trust)
-- Real legal text — pages will use compliant template copy with clear "Review before launch with Ugandan/Kenyan legal counsel" notice in admin docs
-- Real Clerk → Cloud webhook (mirrored client-side on first sign-in)
+```
+src/components/site/ProductCard.tsx          → add "Buy on Credit" button + onApply prop
+src/components/site/LeadModal.tsx            → geolocation, eligibility quiz, richer WhatsApp message
+src/components/site/PartnerAgreement.tsx     → NEW agreement card used in /partners step 3
+src/lib/eligibility.ts                       → NEW pure scoring + down-payment calc
+src/lib/geolocation.ts                       → NEW navigator.geolocation + Nominatim helper
+src/routes/marketplace.tsx                   → wire card "Buy on Credit" to a single LeadModal instance
+src/routes/marketplace.$id.tsx               → recommendations rail + detailed specs accordion
+src/routes/index.tsx                         → "How it works", eligibility banner, partner economics
+src/routes/partners.tsx                      → 3-step flow with agreement
+src/routes/legal.partner-agreement.tsx       → NEW agreement page
+src/routes/legal.tsx                         → add agreement link
+src/components/site/Footer.tsx               → add "Sales Partner Agreement" link
+src/routes/admin.leads.tsx                   → location, tier, agreement columns + partner filter
+src/routes/admin.products.tsx                → simple key/value editor for `specifications`
+supabase/migrations/<timestamp>_leads_eligibility.sql
+```
+
+## 8. Out of scope (this phase)
+
+- Real KYC / national ID verification (we capture, don't verify).
+- Live MoMo collection API (deposit collection is described and tracked, not auto-charged — partner collects via their MoMo merchant line).
+- E-signature legal binding (typed-name acknowledgement only; "review with counsel before launch" notice stays).
+- Partner payouts dashboard (this phase ends at agreement acceptance & lead capture; payout reconciliation is a follow-up).
