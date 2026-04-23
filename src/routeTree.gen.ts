@@ -15,6 +15,7 @@ import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
@@ -23,6 +24,11 @@ import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
 import { Route as LegalDataPracticesRouteImport } from './routes/legal.data-practices'
 import { Route as LegalCreditDisclosureRouteImport } from './routes/legal.credit-disclosure'
 import { Route as LegalCookiesRouteImport } from './routes/legal.cookies'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminSystemRouteImport } from './routes/admin.system'
+import { Route as AdminProductsRouteImport } from './routes/admin.products'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -52,6 +58,11 @@ const LegalRoute = LegalRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -94,16 +105,47 @@ const LegalCookiesRoute = LegalCookiesRouteImport.update({
   path: '/cookies',
   getParentRoute: () => LegalRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSystemRoute = AdminSystemRouteImport.update({
+  id: '/system',
+  path: '/system',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/leads': typeof AdminLeadsRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/system': typeof AdminSystemRoute
+  '/admin/users': typeof AdminUsersRoute
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
   '/legal/data-practices': typeof LegalDataPracticesRoute
@@ -114,12 +156,18 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/leads': typeof AdminLeadsRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/system': typeof AdminSystemRoute
+  '/admin/users': typeof AdminUsersRoute
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
   '/legal/data-practices': typeof LegalDataPracticesRoute
@@ -131,12 +179,18 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/leads': typeof AdminLeadsRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/system': typeof AdminSystemRoute
+  '/admin/users': typeof AdminUsersRoute
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/credit-disclosure': typeof LegalCreditDisclosureRoute
   '/legal/data-practices': typeof LegalDataPracticesRoute
@@ -149,12 +203,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/legal'
     | '/marketplace'
     | '/partners'
     | '/sign-in'
     | '/sign-up'
+    | '/admin/analytics'
+    | '/admin/leads'
+    | '/admin/products'
+    | '/admin/system'
+    | '/admin/users'
     | '/legal/cookies'
     | '/legal/credit-disclosure'
     | '/legal/data-practices'
@@ -165,12 +225,18 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/legal'
     | '/marketplace'
     | '/partners'
     | '/sign-in'
     | '/sign-up'
+    | '/admin/analytics'
+    | '/admin/leads'
+    | '/admin/products'
+    | '/admin/system'
+    | '/admin/users'
     | '/legal/cookies'
     | '/legal/credit-disclosure'
     | '/legal/data-practices'
@@ -181,12 +247,18 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/legal'
     | '/marketplace'
     | '/partners'
     | '/sign-in'
     | '/sign-up'
+    | '/admin/analytics'
+    | '/admin/leads'
+    | '/admin/products'
+    | '/admin/system'
+    | '/admin/users'
     | '/legal/cookies'
     | '/legal/credit-disclosure'
     | '/legal/data-practices'
@@ -198,6 +270,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   LegalRoute: typeof LegalRouteWithChildren
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
@@ -248,6 +321,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -306,8 +386,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalCookiesRouteImport
       parentRoute: typeof LegalRoute
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/system': {
+      id: '/admin/system'
+      path: '/system'
+      fullPath: '/admin/system'
+      preLoaderRoute: typeof AdminSystemRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminSystemRoute: typeof AdminSystemRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminSystemRoute: AdminSystemRoute,
+  AdminUsersRoute: AdminUsersRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface LegalRouteChildren {
   LegalCookiesRoute: typeof LegalCookiesRoute
@@ -342,6 +475,7 @@ const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   LegalRoute: LegalRouteWithChildren,
   MarketplaceRoute: MarketplaceRouteWithChildren,
