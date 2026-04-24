@@ -185,3 +185,87 @@ export const ACTIVE_ANNOUNCEMENTS_QUERY = `*[_type == "announcement" && active =
   linkUrl,
   variant
 }`
+
+export const PHONES_LIST_QUERY = `*[_type == "phone" && available == true] | order(sortOrder asc){
+  _id,
+  name,
+  slug,
+  brand,
+  category,
+  price,
+  assetPrice,
+  downPayment,
+  assetModel,
+  image,
+  heroImage{ asset->{ url, metadata }, alt },
+  alt,
+  available,
+  rating,
+  specs,
+  badges,
+  sortOrder
+}`
+
+export const PHONES_BY_BRAND_QUERY = `*[_type == "phone" && brand == $brand && available == true] | order(sortOrder asc){
+  _id,
+  name,
+  slug,
+  brand,
+  category,
+  price,
+  assetPrice,
+  downPayment,
+  assetModel,
+  image,
+  heroImage{ asset->{ url, metadata }, alt },
+  alt,
+  available,
+  rating,
+  specs,
+  badges,
+  sortOrder
+}`
+
+export const PHONES_BY_CATEGORY_QUERY = `*[_type == "phone" && category == $category && available == true] | order(sortOrder asc){
+  _id,
+  name,
+  slug,
+  brand,
+  category,
+  price,
+  assetPrice,
+  downPayment,
+  assetModel,
+  image,
+  heroImage{ asset->{ url, metadata }, alt },
+  alt,
+  available,
+  rating,
+  specs,
+  badges,
+  sortOrder
+}`
+
+export const PHONE_DETAIL_QUERY = `*[_type == "phone" && slug.current == $slug][0]{
+  _id,
+  name,
+  slug,
+  brand,
+  category,
+  price,
+  assetPrice,
+  downPayment,
+  assetModel,
+  image,
+  heroImage{ asset->{ url, metadata }, alt },
+  alt,
+  available,
+  rating,
+  specs,
+  badges,
+  sortOrder
+}`
+
+export const PHONE_BRANDS_QUERY = `array::unique(*[_type == "phone" && available == true].brand)`
+
+export const PHONE_COUNT_QUERY = `count(*[_type == "phone"])`
