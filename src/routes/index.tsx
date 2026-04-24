@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight, Smartphone, ShieldCheck, Wallet, Users,
   Search as SearchIcon, ClipboardCheck, Banknote, PackageCheck,
-  HandCoins, MessageSquare, Headphones, Calculator,
+  HandCoins, MessageSquare, Headphones, Calculator, Shield, FileCheck2, LockKeyhole,
+  CircleAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -23,40 +24,40 @@ const TESTIMONIALS = [
   {
     name: "Namugga Christine",
     role: "Boutique owner — Owino Market, Kampala",
-    photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=80",
+    photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&q=80",
     quote:
       "I got my Samsung A15 with just UGX 147,500 down. My business is now on WhatsApp.",
   },
   {
     name: "Ssemwogerere Robert",
     role: "Boda boda rider — Wakiso",
-    photo: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&q=80",
+    photo: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=200&q=80",
     quote:
       "RovaCredit gave me a phone when no bank would. I pay weekly through MoMo.",
   },
   {
     name: "Akello Grace Lamwaka",
     role: "Salon owner — Gulu",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80",
+    photo: "https://images.unsplash.com/photo-1545167622-3a6ac756afa4?w=200&q=80",
     quote: "Three phones for my staff on flexible terms. Easiest financing I've used.",
   },
   {
     name: "Mukasa Joseph Kintu",
     role: "SME retailer — Mbarara",
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+    photo: "https://images.unsplash.com/photo-1521119989659-a83eee488004?w=200&q=80",
     quote:
       "Partnered with RovaCredit to offer phone financing to my customers. Game changer.",
   },
   {
     name: "Nabirye Esther",
     role: "University student — Makerere",
-    photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
+    photo: "https://images.unsplash.com/photo-1545291730-faff8ca1d4b0?w=200&q=80",
     quote: "Got my A25 5G for school. Pay-as-I-earn from my side hustle.",
   },
   {
     name: "Tumusiime Patrick Byaruhanga",
     role: "Farmer cooperative leader — Kabale",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
+    photo: "https://images.unsplash.com/photo-1536763225213-b5592b5e0a8e?w=200&q=80",
     quote:
       "We financed 20 phones for our cooperative members. RovaCredit understood us.",
   },
@@ -75,6 +76,7 @@ function HomePage() {
     [loanAmount, loanWeeks],
   );
   const totalRepayment = weeklyPayment * loanWeeks;
+  const estimatedDeposit = Math.ceil(loanAmount * 0.15);
 
   return (
     <SiteShell>
@@ -119,6 +121,13 @@ function HomePage() {
             </div>
           </div>
           <div className="relative">
+            <div className="mb-4 overflow-hidden rounded-3xl border border-white/20 bg-white/5 shadow-elegant">
+              <img
+                src="https://media.giphy.com/media/i93FlNqwdRcSscMpxb/giphy.gif"
+                alt="Shopper in a phone shop scrolling with a Samsung phone display"
+                className="h-44 w-full object-cover md:h-56"
+              />
+            </div>
             <div className="rounded-3xl border border-white/20 bg-white/10 p-6 shadow-elegant backdrop-blur-xl">
               <p className="flex items-center gap-2 text-sm font-semibold text-white">
                 <Calculator className="h-4 w-4" /> Phone Loan Calculator
@@ -166,6 +175,22 @@ function HomePage() {
                   Total: {formatUGX(totalRepayment)}
                 </p>
               </div>
+
+              <div className="mt-4 overflow-hidden rounded-2xl border border-white/15 bg-black/15">
+                <img
+                  src="https://media.giphy.com/media/i93FlNqwdRcSscMpxb/giphy.gif"
+                  alt="Shopper at a phone shop scrolling while Samsung phones are displayed"
+                  className="h-44 w-full object-cover"
+                />
+                <div className="flex items-center justify-between bg-black/25 px-3 py-2 text-xs text-primary-foreground/85">
+                  <span>Live shopper moment</span>
+                  <span>Samsung display</span>
+                </div>
+              </div>
+
+              <p className="mt-3 text-center text-xs text-primary-foreground/80">
+                Estimated deposit from <span className="font-semibold text-white">{formatUGX(estimatedDeposit)}</span>
+              </p>
 
               <Button asChild className="mt-5 w-full bg-success text-success-foreground hover:bg-success/90">
                 <Link to="/marketplace">
@@ -274,6 +299,62 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Legal and compliance quick summary */}
+      <section id="compliance" className="mx-auto max-w-7xl px-4 pb-16 md:px-6">
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-card md:p-8">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              Fintech legal and data compliance
+            </span>
+            <span className="inline-flex items-center rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
+              Uganda, Kenya, Tanzania, Rwanda
+            </span>
+          </div>
+          <h3 className="mt-4 text-2xl font-bold tracking-tight">
+            Built for responsible lending, transparent terms, and secure data practices.
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Our onboarding and repayment workflows are designed to respect country-level data protection rules,
+            explicit consent, and fair-credit disclosures for East African markets.
+          </p>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <LegalPill
+              icon={LockKeyhole}
+              title="Data protection by design"
+              detail="Consent-led processing, data minimization, and secure retention aligned to regional privacy obligations."
+            />
+            <LegalPill
+              icon={FileCheck2}
+              title="Consumer credit transparency"
+              detail="Pricing, repayments, and late-payment handling are disclosed with clear terms before confirmation."
+            />
+            <LegalPill
+              icon={Shield}
+              title="Cross-market compliance baseline"
+              detail="Operational controls mapped to Uganda DPPA, Kenya DPA, Tanzania PDPA, and Rwanda privacy frameworks."
+            />
+          </div>
+          <div className="mt-5 rounded-xl border border-warning/40 bg-warning/10 p-4">
+            <p className="flex items-start gap-2 text-sm text-warning-foreground">
+              <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+              Country privacy and credit rules evolve. Customers should review local terms and disclosures,
+              and RovaCredit updates policies as regulations change across East African markets.
+            </p>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button asChild variant="outline">
+              <Link to="/legal/privacy">Privacy policy</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/legal/data-practices">Data practices</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/legal/credit-disclosure">Credit disclosure</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Become a sales partner */}
       <section className="bg-sidebar py-16 text-sidebar-foreground">
         <div className="mx-auto max-w-6xl px-4 md:px-6">
@@ -341,6 +422,24 @@ function PartnerPerk({ Icon, title, desc }: { Icon: typeof Smartphone; title: st
       <Icon className="h-6 w-6 text-success" />
       <h3 className="mt-3 font-semibold">{title}</h3>
       <p className="mt-1 text-sm text-sidebar-foreground/80">{desc}</p>
+    </div>
+  );
+}
+
+function LegalPill({
+  icon: Icon,
+  title,
+  detail,
+}: {
+  icon: typeof Shield;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-muted/20 p-4">
+      <Icon className="h-5 w-5 text-primary" />
+      <h4 className="mt-2 font-semibold">{title}</h4>
+      <p className="mt-1 text-sm text-muted-foreground">{detail}</p>
     </div>
   );
 }

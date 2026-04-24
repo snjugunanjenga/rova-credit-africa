@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as PressRouteImport } from './routes/press'
 import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CareersRouteImport } from './routes/careers'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -41,6 +43,11 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PressRoute = PressRouteImport.update({
+  id: '/press',
+  path: '/press',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartnersRoute = PartnersRouteImport.update({
   id: '/partners',
   path: '/partners',
@@ -59,6 +66,11 @@ const LegalRoute = LegalRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -141,10 +153,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
+  '/press': typeof PressRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -164,10 +178,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
+  '/press': typeof PressRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -188,10 +204,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/legal': typeof LegalRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/partners': typeof PartnersRoute
+  '/press': typeof PressRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -213,10 +231,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/careers'
     | '/contact'
     | '/legal'
     | '/marketplace'
     | '/partners'
+    | '/press'
     | '/sign-in'
     | '/sign-up'
     | '/admin/analytics'
@@ -236,10 +256,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/careers'
     | '/contact'
     | '/legal'
     | '/marketplace'
     | '/partners'
+    | '/press'
     | '/sign-in'
     | '/sign-up'
     | '/admin/analytics'
@@ -259,10 +281,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/careers'
     | '/contact'
     | '/legal'
     | '/marketplace'
     | '/partners'
+    | '/press'
     | '/sign-in'
     | '/sign-up'
     | '/admin/analytics'
@@ -283,10 +307,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
+  CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   LegalRoute: typeof LegalRouteWithChildren
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   PartnersRoute: typeof PartnersRoute
+  PressRoute: typeof PressRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
 }
@@ -305,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/press': {
+      id: '/press'
+      path: '/press'
+      fullPath: '/press'
+      preLoaderRoute: typeof PressRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partners': {
@@ -333,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -497,10 +537,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
+  CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   LegalRoute: LegalRouteWithChildren,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   PartnersRoute: PartnersRoute,
+  PressRoute: PressRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
 }
