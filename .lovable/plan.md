@@ -1,126 +1,147 @@
 
-# RovaCredit — Lead Capture, Geolocation, Recommendations & Partner Program
+# RovaCredit Africa — Architecture Documentation Set
 
-Building on the existing footer, marketplace and admin. Footer pages already exist (`/legal/*`, `/about`, `/partners`, `/contact`); this phase wires up the conversion flow and the partner agreement program.
+Generate a complete, executive-grade documentation bundle in `/.lovable/` describing the **target production architecture** (React 19 + FastAPI + Celery + Redis + Inngest + Cloud SQL + Clerk + GCP). The current Lovable Cloud build is treated as a discarded prototype — docs describe only the new stack.
 
-## 1. "Buy on Credit" everywhere on the marketplace
+## Scope
 
-- **ProductCard**: add a prominent **"Buy on Credit"** button at the bottom of every card (in addition to the card linking to the detail page). Clicking it opens the lead modal **without leaving the marketplace**.
-- **Product detail page**: keep existing "Buy on Credit" + add a **"View full specs"** accordion (RAM, storage, battery, camera, network, screen, OS, warranty) populated from `products.specs` plus a new `specifications` JSONB column.
-- **Specs schema upgrade** — add `specifications jsonb` (key/value detailed specs) to `products`; admin Products CRUD gets a small key/value editor. Existing 48 seeded products stay valid (column nullable).
+- **Audience**: Senior engineers, ops, security, product, compliance, and onboarding readers.
+- **Depth**: Executive (5–10 pages per file, ~40–60 pages total).
+- **Style**: Clean Markdown, ASCII diagrams, tables, no emoji, references to Uganda DPPA 2019 + Kenya DPA 2019.
+- **No code changes**: this phase only writes `.md` files. Existing app code is untouched.
 
-## 2. Lead form upgrade — geolocation + eligibility + richer WhatsApp handoff
+## Files to create under `/.lovable/`
 
-Upgrade `LeadModal` (used by card + detail page):
-
-- **Location detector**: on modal open, request `navigator.geolocation`. If granted, capture `{lat, lng}` and reverse-geocode via free **OpenStreetMap Nominatim** (no key needed) to get a human-readable area (e.g. "Kampala, Central Region"). User can also type their area manually if they decline.
-- **Eligibility mini-quiz** (3 quick fields): monthly income (UGX), employment type (Salaried / Self-employed / Boda / Student / Farmer), preferred repayment cadence (Daily / Weekly / Monthly).
-- **Live eligibility calculator** (client-side, transparent): scores into 5 tiers and shows the user their estimated **down payment % (5% – 25%)** for the selected device before they submit.
-
-  Tier logic (illustrative):
-  ```
-  Score = income_band(0-3) + employment_band(0-2) + cadence_band(0-1)
-  Tier A (5%)  : score ≥ 5  → low risk
-  Tier B (10%) : score = 4
-  Tier C (15%) : score = 3
-  Tier D (20%) : score = 2
-  Tier E (25%) : score ≤ 1  → higher risk
-  ```
-  Repayment plan = `(asset_price - down_payment) / weeks` over up to **52 weeks**, plus configurable interest/fees shown as a transparent breakdown.
-
-- **Submit** writes a richer row into `leads`:
-  - existing fields, plus `latitude`, `longitude`, `location_label`, `eligibility_tier`, `eligibility_down_payment_pct`, `computed_down_payment`, `repayment_cadence`, `employment_type`.
-- **WhatsApp handoff**: after insert, auto-open WhatsApp to **+254 727 291 121** with a pre-filled introductory message:
-
-  > Hello RovaCredit Africa 👋
-  > I'd like to apply for the **Samsung Galaxy A15 (128GB/4GB)**.
-  > Name: Namugga Christine
-  > Phone: +256 7XX XXX XXX
-  > Location: Ntinda, Kampala (0.3476, 32.6126)
-  > Income band: UGX 300k–600k · Self-employed · Weekly repayments
-  > Eligibility tier: B → estimated 10% down (UGX 48,000)
-  > Lead ref: RC-7F3A
-  > I consent to processing per Uganda DPPA 2019 / Kenya DPA 2019.
-
-  Lead reference (`RC-XXXX`) is generated from the new lead's UUID so ops can trace it.
-
-## 3. Recommendation engine on product detail page
-
-- New "**You may also like**" rail at the bottom of `/marketplace/$id` showing 4–6 similar products.
-- Similarity rules (no ML — deterministic SQL):
-  1. Same `category` first
-  2. Then same `brand`
-  3. Then `asset_price` within ±25% of current product
-  4. Exclude current product, sort by `sort_order`
-- Implemented as a single Supabase query in a `useQuery` keyed by product id.
-
-## 4. Homepage refresh — new commercial story
-
-- New **"How it works"** strip (4 steps): Browse → Apply (eligibility check) → Pay deposit via MoMo → Get your phone, repay weekly/daily.
-- New **"Eligibility-based down payment 5–25%"** banner with a tier explainer.
-- New **"Become a sales partner"** section right under the partner CTA showing the partner economics:
-  - You receive your **full processing fee on the spot**
-  - You collect the customer **deposit via MoMo**
-  - We handle credit, recovery, and customer support
-  - 1-year repayment plans, daily or weekly
-- Keep existing testimonials & Why-RovaCredit pillars.
-
-## 5. Partner program — agreement & onboarding
-
-Upgrade `/partners` from a single intake form into a 3-step flow:
-
-- **Step 1 — Pitch & economics**: revenue split, payout flow, MoMo deposit collection, exclusive territory option, training & POS materials.
-- **Step 2 — Application form**: existing fields + business location (geolocation prefilled), TIN/registration number, average foot traffic, owner's national ID number, MoMo merchant code (optional).
-- **Step 3 — Partner Agreement**: scrollable agreement text in a card with checkbox "I have read and agree to the RovaCredit Sales Partner Agreement." Signature capture = typed full name + date acknowledged. On submit, lead row stores `agreement_accepted_at`, `agreement_version = "v1.0"`, `agreement_signatory_name`.
-- New route **`/legal/partner-agreement`** with full agreement text (template, with reviewable-by-counsel notice).
-- Footer gets a new link under **Corporate** → "Sales Partner Agreement".
-- Admin **Leads** view gains a **"Partner applications"** filter showing only `source='partner'`, with agreement status column and a "View agreement snapshot" drawer.
-
-## 6. Database changes (one migration)
+### Core docs (the 8 you requested)
 
 ```
-ALTER TABLE products ADD COLUMN specifications jsonb;
-
-ALTER TABLE leads
-  ADD COLUMN latitude double precision,
-  ADD COLUMN longitude double precision,
-  ADD COLUMN location_label text,
-  ADD COLUMN eligibility_tier text,
-  ADD COLUMN eligibility_down_payment_pct numeric,
-  ADD COLUMN computed_down_payment numeric,
-  ADD COLUMN repayment_cadence text,
-  ADD COLUMN employment_type text,
-  ADD COLUMN agreement_version text,
-  ADD COLUMN agreement_accepted_at timestamptz,
-  ADD COLUMN agreement_signatory_name text,
-  ADD COLUMN lead_ref text GENERATED ALWAYS AS ('RC-' || upper(substr(id::text,1,4))) STORED;
+.lovable/
+├── techstack.md            Stack inventory, versions, rationale, cost notes
+├── PRD.md                  Product Requirements: vision, personas, user stories, KPIs, scope
+├── Architecture.md         System architecture, C4 context+container diagrams, data flow
+├── Plan.md                 Delivery plan: milestones, owners, dependencies, risks
+├── phases.md               Phased rollout: MVP → Beta → GA → Pan-African expansion
+├── workflow.md             Dev workflow: branching, PR, CI/CD, code review, release trains
+├── Onboarding_flow.md      Customer + Partner onboarding journeys (sequence diagrams)
+└── Admin.md                Admin command center: roles, screens, permissions matrix
 ```
 
-RLS policies unchanged (insert remains public for `leads`; reads stay role-gated).
-
-## 7. Files touched
+### Additional Senior-Architect deliverables
 
 ```
-src/components/site/ProductCard.tsx          → add "Buy on Credit" button + onApply prop
-src/components/site/LeadModal.tsx            → geolocation, eligibility quiz, richer WhatsApp message
-src/components/site/PartnerAgreement.tsx     → NEW agreement card used in /partners step 3
-src/lib/eligibility.ts                       → NEW pure scoring + down-payment calc
-src/lib/geolocation.ts                       → NEW navigator.geolocation + Nominatim helper
-src/routes/marketplace.tsx                   → wire card "Buy on Credit" to a single LeadModal instance
-src/routes/marketplace.$id.tsx               → recommendations rail + detailed specs accordion
-src/routes/index.tsx                         → "How it works", eligibility banner, partner economics
-src/routes/partners.tsx                      → 3-step flow with agreement
-src/routes/legal.partner-agreement.tsx       → NEW agreement page
-src/routes/legal.tsx                         → add agreement link
-src/components/site/Footer.tsx               → add "Sales Partner Agreement" link
-src/routes/admin.leads.tsx                   → location, tier, agreement columns + partner filter
-src/routes/admin.products.tsx                → simple key/value editor for `specifications`
-supabase/migrations/<timestamp>_leads_eligibility.sql
+.lovable/
+├── Security.md             Threat model (STRIDE), RBAC, secrets, key rotation, audit
+├── Compliance.md           Uganda DPPA 2019, Kenya DPA 2019, KYC, consumer credit, DSR flow
+├── DataModel.md            ERD, table dictionary, retention, PII classification
+├── API.md                  REST contract sketch (OpenAPI-style), versioning, errors
+├── Runbook.md              Incident response, on-call, common ops, DR/backup
+├── Testing.md              Pyramid: pytest unit/integration, Playwright E2E, load
+├── Observability.md        Logs (Cloud Logging), metrics, traces, SLOs, alerts
+└── adr/
+    ├── ADR-0001-fastapi-over-django.md
+    ├── ADR-0002-celery-and-inngest-split.md
+    ├── ADR-0003-clerk-auth-frontend-only.md
+    ├── ADR-0004-cloud-sql-postgres.md
+    ├── ADR-0005-vercel-frontend-gcloud-backend.md
+    ├── ADR-0006-locker-io-secrets.md
+    └── ADR-0007-whatsapp-business-as-channel.md
 ```
 
-## 8. Out of scope (this phase)
+## Stack documented (per your request)
 
-- Real KYC / national ID verification (we capture, don't verify).
-- Live MoMo collection API (deposit collection is described and tracked, not auto-charged — partner collects via their MoMo merchant line).
-- E-signature legal binding (typed-name acknowledgement only; "review with counsel before launch" notice stays).
-- Partner payouts dashboard (this phase ends at agreement acceptance & lead capture; payout reconciliation is a follow-up).
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, Vite, TanStack Router/Query, Tailwind |
+| Frontend hosting | Vercel (primary) + cPanel (legacy/static fallback) |
+| Auth | Clerk (frontend SDK only — incompatible with SSR per Lovable docs noted) |
+| API | FastAPI (Python 3.12) on Google Cloud Run |
+| Async jobs | Celery + Redis (broker/result) for in-flight tasks |
+| Workflow orchestration | Inngest for durable, scheduled, retry-safe flows (lead routing, partner payouts, repayment reminders) |
+| Database | Cloud SQL for PostgreSQL 16 (Private IP, IAM auth, automated backups) |
+| Cache / queue | Redis (Memorystore) |
+| Secrets | Google Secret Manager (runtime) + GitHub Secrets (CI) + Locker.io (team password vault) |
+| Maps / geo | Google Maps API (Places + Geocoding for partner/customer location) |
+| Messaging | WhatsApp Business Cloud API (lead handoff to +254 727 291 121, templated outbound) |
+| Testing | Pytest, Playwright (E2E), k6 (load) |
+| CI/CD | GitHub Actions → Cloud Build → Cloud Run; Vercel for frontend |
+| Observability | Google Cloud Logging + Monitoring; Sentry for FE/BE errors |
+
+## Key documentation contents (highlights)
+
+### Architecture.md — system diagram
+
+```text
+                ┌────────────────────────┐
+                │  Customer / Partner    │
+                │  (Web + WhatsApp)      │
+                └────────────┬───────────┘
+                             │
+               ┌─────────────▼─────────────┐
+               │  React 19 SPA on Vercel   │
+               │  Clerk SDK (frontend)     │
+               └─────────────┬─────────────┘
+                             │ HTTPS / JWT (Clerk)
+               ┌─────────────▼─────────────┐
+               │  FastAPI on Cloud Run     │
+               │  - REST endpoints         │
+               │  - Clerk JWT verification │
+               │  - RBAC middleware        │
+               └──┬───────────┬─────────┬──┘
+                  │           │         │
+       ┌──────────▼──┐  ┌─────▼────┐  ┌─▼──────────────┐
+       │ Cloud SQL   │  │ Redis    │  │ Inngest Cloud  │
+       │ Postgres 16 │  │ +Celery  │  │ (durable wfs)  │
+       └─────────────┘  └─────┬────┘  └─┬──────────────┘
+                              │         │
+                       ┌──────▼─────────▼──────┐
+                       │ External integrations │
+                       │ - WhatsApp Business   │
+                       │ - Google Maps         │
+                       │ - MoMo / Airtel (lead)│
+                       └───────────────────────┘
+```
+
+### Onboarding_flow.md — two journeys with sequence diagrams
+
+1. **Customer "Buy on Credit"**: browse → select device → eligibility quiz (5–25% tier) → geolocation → DPPA consent → lead persisted → WhatsApp handoff.
+2. **Sales Partner**: pitch → application (geo + TIN + MoMo merchant code) → agreement v1.0 e-sign → admin approval → POS kit dispatched → first sale.
+
+### Admin.md — RBAC matrix
+
+| Capability | admin_owner | developer | analyst | marketer |
+|---|---|---|---|---|
+| Manage users & roles | ✓ | | | |
+| Products CRUD | ✓ | ✓ | | |
+| Leads view | ✓ | ✓ | ✓ | ✓ |
+| Leads edit/assign | ✓ | | ✓ | ✓ |
+| Approve partners | ✓ | | ✓ | |
+| System diagnostics | ✓ | ✓ | | |
+| Analytics dashboards | ✓ | ✓ | ✓ | ✓ |
+
+### phases.md — delivery roadmap
+
+- **Phase 0 (Now)**: Lovable prototype validated.
+- **Phase 1 (MVP, 6 wks)**: FastAPI + Cloud SQL + Clerk + WhatsApp inbound; Uganda only.
+- **Phase 2 (Beta, 8 wks)**: Celery+Redis+Inngest, partner agreements, MoMo deposit tracking.
+- **Phase 3 (GA, 12 wks)**: Repayment scheduler, collections, analytics, Kenya rollout.
+- **Phase 4**: Tanzania + Rwanda, native mobile companion.
+
+### Compliance.md — Uganda + Kenya specifics
+
+- Uganda **Data Protection and Privacy Act 2019** + Personal Data Protection Office registration.
+- Kenya **Data Protection Act 2019** + ODPC notification.
+- Named DPO, DSR portal, breach notification SLAs (72h Uganda / 72h Kenya).
+- Consumer credit disclosure standards, APR transparency, complaints register.
+
+### Security.md — highlights
+
+- STRIDE per component, JWT validation pipeline, Cloud SQL IAM auth, VPC SC.
+- Secrets: GSM (runtime), GitHub Secrets (CI), Locker.io (humans). Rotation cadence table.
+- Audit log: append-only `audit_events` table, retention 7 years.
+
+### Out of scope for this phase
+
+- No code changes, no infrastructure provisioning, no Terraform.
+- No migration scripts from Lovable Cloud → Cloud SQL (covered as a future ADR).
+- Real legal text remains placeholder; each legal doc carries a "review with East African counsel before launch" notice.
+
