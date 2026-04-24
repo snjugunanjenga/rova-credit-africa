@@ -1,16 +1,19 @@
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight, Smartphone, ShieldCheck, Wallet, Users,
   Search as SearchIcon, ClipboardCheck, Banknote, PackageCheck,
-  HandCoins, MessageSquare, Headphones,
+  HandCoins, MessageSquare, Headphones, Calculator,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { SiteShell } from "@/components/site/SiteShell";
+import { BrandLogo } from "@/components/site/BrandLogo";
 import { ProductCard } from "@/components/site/ProductCard";
 import type { ProductCardData } from "@/components/site/ProductCard";
 import { supabase } from "@/integrations/supabase/client";
-import { whatsappLink } from "@/lib/format";
+import { formatUGX, whatsappLink } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -60,6 +63,8 @@ const TESTIMONIALS = [
 ];
 
 function HomePage() {
+  const [loanAmount, setLoanAmount] = useState(700000);
+  const [loanWeeks, setLoanWeeks] = useState(52);
   const { data: featured = [] } = useQuery({
     queryKey: ["featured-products"],
     queryFn: async () => {
@@ -73,6 +78,12 @@ function HomePage() {
     },
   });
 
+  const weeklyPayment = useMemo(
+    () => Math.ceil((loanAmount * 1.12) / loanWeeks),
+    [loanAmount, loanWeeks],
+  );
+  const totalRepayment = weeklyPayment * loanWeeks;
+
   return (
     <SiteShell>
       {/* Hero */}
@@ -82,25 +93,28 @@ function HomePage() {
             <p className="mb-3 inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium backdrop-blur">
               🇺🇬 Uganda-first · Kenya · Tanzania · Rwanda
             </p>
+            <div className="mb-6 max-w-[180px] rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur">
+              <BrandLogo light />
+            </div>
             <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-              Own your phone today. <span className="text-gold">Pay flexibly.</span>
+              Own your phone today. <span className="text-success">Pay flexibly.</span>
             </h1>
             <p className="mt-4 max-w-xl text-base text-primary-foreground/90 md:text-lg">
               Pan-African asset financing for smartphones — powered by MTN MoMo and Airtel Money.
               Apply in minutes, get approved on WhatsApp.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/marketplace">
-                <Button size="lg" variant="secondary" className="bg-gold text-gold-foreground hover:bg-gold/90">
+              <Button asChild size="lg" className="bg-success text-success-foreground hover:bg-success/90">
+                <Link to="/marketplace">
                   Browse Marketplace <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
               <a
                 href={whatsappLink("Hello RovaCredit, I'd like to know more about phone financing.")}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">
+                <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20">
                   Chat on WhatsApp
                 </Button>
               </a>
@@ -113,17 +127,66 @@ function HomePage() {
             </div>
           </div>
           <div className="relative">
-            <img
-              src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=900&q=80"
-              alt="Ugandan customer using a smartphone"
-              className="rounded-2xl shadow-elegant"
-            />
+            <div className="rounded-3xl border border-white/20 bg-white/10 p-6 shadow-elegant backdrop-blur-xl">
+              <p className="flex items-center gap-2 text-sm font-semibold text-white">
+                <Calculator className="h-4 w-4" /> Phone Loan Calculator
+              </p>
+
+              <div className="mt-5">
+                <div className="mb-2 flex items-center justify-between text-sm text-primary-foreground/85">
+                  <span>Loan amount</span>
+                  <span className="font-semibold text-white">{formatUGX(loanAmount)}</span>
+                </div>
+                <Slider
+                  min={100000}
+                  max={2500000}
+                  step={10000}
+                  value={[loanAmount]}
+                  onValueChange={(value) => setLoanAmount(value[0] ?? 700000)}
+                  aria-label="Loan amount"
+                />
+              </div>
+
+              <div className="mt-5">
+                <div className="mb-2 flex items-center justify-between text-sm text-primary-foreground/85">
+                  <span>Loan term</span>
+                  <span className="font-semibold text-white">{loanWeeks} weeks</span>
+                </div>
+                <Slider
+                  min={26}
+                  max={104}
+                  step={2}
+                  value={[loanWeeks]}
+                  onValueChange={(value) => setLoanWeeks(value[0] ?? 52)}
+                  aria-label="Loan term in weeks"
+                />
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p className="text-center text-xs uppercase tracking-wider text-primary-foreground/70">
+                  Weekly Payment
+                </p>
+                <p className="mt-1 text-center text-3xl font-bold text-white">
+                  {formatUGX(weeklyPayment)}
+                  <span className="ml-1 text-sm font-medium text-primary-foreground/80">/week</span>
+                </p>
+                <p className="mt-1 text-center text-xs text-primary-foreground/70">
+                  Total: {formatUGX(totalRepayment)}
+                </p>
+              </div>
+
+              <Button asChild className="mt-5 w-full bg-success text-success-foreground hover:bg-success/90">
+                <Link to="/marketplace">
+                  Apply Now <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Why */}
-      <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
+      <section id="why" className="mx-auto max-w-7xl px-4 py-16 md:px-6">
         <h2 className="mb-10 text-center text-3xl font-bold tracking-tight">Why RovaCredit Africa</h2>
         <div className="grid gap-6 md:grid-cols-4">
           <Pillar Icon={Smartphone} title="Latest devices" desc="Samsung, Tecno, Infinix, iPhone, Xiaomi — all in one marketplace." />
@@ -134,7 +197,7 @@ function HomePage() {
       </section>
 
       {/* How it works */}
-      <section className="bg-muted/30 py-16">
+      <section id="how-it-works" className="bg-muted/30 py-16">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <h2 className="mb-2 text-center text-3xl font-bold tracking-tight">How it works</h2>
           <p className="mx-auto mb-10 max-w-2xl text-center text-muted-foreground">
@@ -151,7 +214,7 @@ function HomePage() {
 
       {/* Eligibility banner */}
       <section className="mx-auto max-w-7xl px-4 py-12 md:px-6">
-        <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-gold/10 p-8 md:p-10">
+        <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-success/15 p-8 md:p-10">
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <p className="inline-flex items-center rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
@@ -169,24 +232,28 @@ function HomePage() {
                 <Tier label="E" pct="25%" />
               </div>
             </div>
-            <Link to="/marketplace">
-              <Button size="lg">Check my eligibility <ArrowRight className="ml-2 h-4 w-4" /></Button>
-            </Link>
+            <Button asChild size="lg">
+              <Link to="/marketplace">
+                Check my eligibility <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Featured */}
-      <section className="bg-muted/40 py-16">
+      <section id="featured" className="bg-muted/40 py-16">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="mb-8 flex items-end justify-between">
             <div>
               <h2 className="text-3xl font-bold tracking-tight">Featured devices</h2>
               <p className="mt-1 text-muted-foreground">Hand-picked phones with flexible UGX terms.</p>
             </div>
-            <Link to="/marketplace">
-              <Button variant="outline">View all <ArrowRight className="ml-2 h-4 w-4" /></Button>
-            </Link>
+            <Button asChild variant="outline">
+              <Link to="/marketplace">
+                View all <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {featured.slice(0, 8).map((p) => (
@@ -230,11 +297,11 @@ function HomePage() {
             <PartnerPerk Icon={Headphones} title="We do the rest" desc="Credit risk, recovery, customer support — all on us. 1-year plans, daily or weekly." />
           </div>
           <div className="mt-8 flex justify-center">
-            <Link to="/partners">
-              <Button size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90">
+            <Button asChild size="lg" className="bg-success text-success-foreground hover:bg-success/90">
+              <Link to="/partners">
                 Apply to partner <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -279,7 +346,7 @@ function Tier({ label, pct }: { label: string; pct: string }) {
 function PartnerPerk({ Icon, title, desc }: { Icon: typeof Smartphone; title: string; desc: string }) {
   return (
     <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/30 p-6">
-      <Icon className="h-6 w-6 text-gold" />
+      <Icon className="h-6 w-6 text-success" />
       <h3 className="mt-3 font-semibold">{title}</h3>
       <p className="mt-1 text-sm text-sidebar-foreground/80">{desc}</p>
     </div>

@@ -63,7 +63,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QKIGp8fuYFcfdNHT3YKjiiQdmc23/social-images/social-1776951501241-rova_credit_logo.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QKIGp8fuYFcfdNHT3YKjiiQdmc23/social-images/social-1776951501241-rova_credit_logo.webp" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/svg+xml", href: "/rova-credit-mark.svg" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
