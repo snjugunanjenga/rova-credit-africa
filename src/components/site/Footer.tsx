@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="mt-16 border-t border-border bg-sidebar text-sidebar-foreground">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
-        <div className="grid gap-10 border-b border-sidebar-border pb-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1.2fr]">
+        <div className="grid gap-10 border-b border-sidebar-border pb-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr_1.2fr]">
           <div>
             <Link to="/" aria-label="RovaCredit home">
               <BrandLogo light />
@@ -18,18 +18,18 @@ export function Footer() {
             </p>
           </div>
 
-          <nav aria-labelledby="footer-product-heading">
+          <nav aria-labelledby="footer-client-heading">
             <h3
-              id="footer-product-heading"
+              id="footer-client-heading"
               className="mb-4 text-sm font-semibold uppercase tracking-wider text-sidebar-primary"
             >
-              Product
+              Clients
             </h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/marketplace" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Browse Phones</Link></li>
               <li><a href="/#how-it-works" className="text-sidebar-foreground/80 hover:text-sidebar-primary">How it Works</a></li>
-              <li><Link to="/partners" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Partner Program</Link></li>
               <li><Link to="/contact" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Credit Application</Link></li>
+              <li><Link to="/legal/credit-disclosure" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Credit Disclosure</Link></li>
             </ul>
           </nav>
 
@@ -42,9 +42,24 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/about" className="text-sidebar-foreground/80 hover:text-sidebar-primary">About RovaCredit</Link></li>
-              <li><Link to="/contact" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Support</Link></li>
+              <li><Link to="/careers" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Careers</Link></li>
+              <li><Link to="/press" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Press</Link></li>
+              <li><Link to="/sign-in" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Admin</Link></li>
+            </ul>
+          </nav>
+
+          <nav aria-labelledby="footer-partners-heading">
+            <h3
+              id="footer-partners-heading"
+              className="mb-4 text-sm font-semibold uppercase tracking-wider text-sidebar-primary"
+            >
+              Partners
+            </h3>
+            <ul className="space-y-2 text-sm">
               <li><Link to="/partners" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Become a Partner</Link></li>
-              <li><Link to="/sign-in" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Admin Sign In</Link></li>
+              <li><Link to="/legal/partner-agreement" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Partner Agreement</Link></li>
+              <li><Link to="/contact" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Partner Support</Link></li>
+              <li><a href="/#compliance" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Compliance Rules</a></li>
             </ul>
           </nav>
 
@@ -61,7 +76,6 @@ export function Footer() {
               <li><Link to="/legal/terms" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Terms of Service</Link></li>
               <li><Link to="/legal/cookies" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Cookie Policy</Link></li>
               <li><Link to="/legal/credit-disclosure" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Credit Disclosure</Link></li>
-              <li><Link to="/legal/partner-agreement" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Partner Agreement</Link></li>
             </ul>
           </nav>
 
