@@ -2,6 +2,7 @@
 
 ## Epic 1 - Intake and Eligibility
 - E1-S1: Build client intake form/API contracts.
+
 - E1-S2: Add CRB adapter with async result handling.
 - E1-S3: Persist decision reasoning and risk tier.
 - E1-S4: Route amendment/rejection outcomes to partner workflows.
