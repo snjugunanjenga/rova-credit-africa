@@ -1,0 +1,411 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────
+
+enum AppRole {
+  admin_owner
+  developer
+  analyst
+  marketer
+  partner
+}
+
+enum LeadStatus {
+  new
+  contacted
+  qualified
+  approved
+  disbursed
+  rejected
+  defaulted
+  converted
+  lost
+}
+
+enum LeadSource {
+  marketplace
+  partner
+  direct
+  dsr
+  web
+}
+
+enum ProductCategory {
+  budget
+  mid_range  @map("mid-range")
+  flagship
+}
+
+enum PartnerStatus {
+  pending
+  approved
+  suspended
+  terminated
+}
+
+enum AgreementStatus {
+  draft
+  sent
+  signed
+  acknowledged
+  expired
+  revoked
+}
+
+enum KycStatus {
+  pending
+  verified
+  rejected
+  expired
+}
+
+enum RepaymentStatus {
+  scheduled
+  paid
+  overdue
+  defaulted
+  waived
+}
+
+enum DsrType {
+  access
+  erase
+  rectify
+  object
+}
+
+enum DsrStatus {
+  received
+  processing
+  fulfilled
+  denied
+}
+
+// ─── Models ─────────────────────────────────────────────
+
+model Profile {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkUserId  String   @unique @map("clerk_user_id")
+  email        String?
+  displayName  String?  @map("display_name")
+  avatarUrl    String?  @map("avatar_url")
+  country      String?  @default("UG")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  roles        UserRole[]      @relation("ProfileRoles")
+  grantedRoles UserRole[]      @relation("GrantedByProfile")
+  assignedLeads Lead[]         @relation("AssignedLeads")
+  partnerApprovals Partner[]   @relation("ApprovedByProfile")
+  kycVerifications KycEvidence[] @relation("VerifiedByProfile")
+  auditEvents  AuditEvent[]
+
+  @@map("profiles")
+}
+
+model UserRole {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId String   @map("profile_id") @db.Uuid
+  role      AppRole
+  grantedBy String?  @map("granted_by") @db.Uuid
+  grantedAt DateTime @default(now()) @map("granted_at") @db.Timestamptz
+
+  profile   Profile  @relation("ProfileRoles", fields: [profileId], references: [id], onDelete: Cascade)
+  grantor   Profile? @relation("GrantedByProfile", fields: [grantedBy], references: [id], onDelete: SetNull)
+
+  @@unique([profileId, role])
+  @@map("user_roles")
+}
+
+model Product {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  brand          String
+  assetModel     String?         @map("asset_model")
+  category       ProductCategory @default(budget)
+  assetPrice     Decimal         @map("asset_price") @db.Decimal(12, 2)
+  downPayment    Decimal         @map("down_payment") @db.Decimal(12, 2)
+  priceLabel     String?         @map("price_label")
+  imageUrl       String?         @map("image_url")
+  altText        String?         @map("alt_text")
+  ram            String?
+  storage        String?
+  specs          String[]        @default([])
+  specifications Json?           @db.JsonB
+  badges         String[]        @default([])
+  rating         Decimal?        @default(4.5) @db.Decimal(2, 1)
+  available      Boolean         @default(true)
+  sortOrder      Int             @default(0) @map("sort_order")
+  sanityRef      String?         @map("sanity_ref")
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  leads          Lead[]
+  images         ProductImage[]
+
+  @@index([available, sortOrder])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  url       String
+  altText   String?  @map("alt_text")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+model Partner {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  tin              String?
+  momoMerchantCode String?       @map("momo_merchant_code")
+  contactPhone     String?       @map("contact_phone")
+  contactEmail     String?       @map("contact_email")
+  addressLabel     String?       @map("address_label")
+  latitude         Float?
+  longitude        Float?
+  ownerIdNumber    String?       @map("owner_id_number")
+  footTraffic      String?       @map("foot_traffic")
+  riskTier         String?       @map("risk_tier")
+  status           PartnerStatus @default(pending)
+  approvedBy       String?       @map("approved_by") @db.Uuid
+  approvedAt       DateTime?     @map("approved_at") @db.Timestamptz
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  approver         Profile?      @relation("ApprovedByProfile", fields: [approvedBy], references: [id], onDelete: SetNull)
+  docs             PartnerDoc[]
+  leads            Lead[]
+  agreements       Agreement[]
+
+  @@index([status])
+  @@map("partners")
+}
+
+model PartnerDoc {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  partnerId  String   @map("partner_id") @db.Uuid
+  docType    String   @map("doc_type")
+  fileUrl    String   @map("file_url")
+  uploadedAt DateTime @default(now()) @map("uploaded_at") @db.Timestamptz
+
+  partner    Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("partner_docs")
+}
+
+model Lead {
+  id                         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadRef                    String?    @map("lead_ref")
+  source                     LeadSource @default(marketplace)
+  status                     LeadStatus @default(new)
+  fullName                   String     @map("full_name")
+  email                      String?
+  phone                      String?
+  country                    String?    @default("Uganda")
+  idType                     String?    @map("id_type")
+  monthlyIncome              String?    @map("monthly_income")
+  employmentType             String?    @map("employment_type")
+  latitude                   Float?
+  longitude                  Float?
+  locationLabel              String?    @map("location_label")
+  eligibilityTier            String?    @map("eligibility_tier")
+  eligibilityDownPaymentPct  Decimal?   @map("eligibility_down_payment_pct")
+  computedDownPayment        Decimal?   @map("computed_down_payment")
+  repaymentCadence           String?    @map("repayment_cadence")
+  productId                  String?    @map("product_id") @db.Uuid
+  productSnapshot            Json?      @map("product_snapshot") @db.JsonB
+  partnerId                  String?    @map("partner_id") @db.Uuid
+  subject                    String?
+  message                    String?
+  consentGiven               Boolean    @default(false) @map("consent_given")
+  agreementVersion           String?    @map("agreement_version")
+  agreementAcceptedAt        DateTime?  @map("agreement_accepted_at") @db.Timestamptz
+  agreementSignatoryName     String?    @map("agreement_signatory_name")
+  assignedTo                 String?    @map("assigned_to") @db.Uuid
+  metadata                   Json?      @default("{}") @db.JsonB
+  createdAt                  DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                  DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  product                    Product?   @relation(fields: [productId], references: [id], onDelete: SetNull)
+  partner                    Partner?   @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+  assignee                   Profile?   @relation("AssignedLeads", fields: [assignedTo], references: [id], onDelete: SetNull)
+  eligibilityCheck           EligibilityCheck?
+  deviceEnrollment           DeviceEnrollment?
+  kycEvidence                KycEvidence?
+  notes                      LeadNote[]
+  agreements                 Agreement[]
+  repayments                 Repayment[]
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([partnerId, status])
+  @@map("leads")
+}
+
+model EligibilityCheck {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId      String   @unique @map("lead_id") @db.Uuid
+  crbProvider String   @map("crb_provider")
+  score       Int?
+  decision    String?
+  reason      String?
+  rawResponse Json?    @map("raw_response") @db.JsonB
+  checkedAt   DateTime @default(now()) @map("checked_at") @db.Timestamptz
+
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("eligibility_checks")
+}
+
+model DeviceEnrollment {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String    @unique @map("lead_id") @db.Uuid
+  imei            String
+  dpAmount        Decimal?  @map("dp_amount") @db.Decimal(12, 2)
+  dpProofUrl      String?   @map("dp_proof_url")
+  knoxStatus      String?   @map("knox_status")
+  payjoyStatus    String?   @map("payjoy_status")
+  goupilRelockTime DateTime? @map("goupil_relock_time") @db.Timestamptz
+  enrolledAt      DateTime  @default(now()) @map("enrolled_at") @db.Timestamptz
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  lead            Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("device_enrollments")
+}
+
+model KycEvidence {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId             String    @unique @map("lead_id") @db.Uuid
+  idFrontUrl         String?   @map("id_front_url")
+  idBackUrl          String?   @map("id_back_url")
+  selfieUrl          String?   @map("selfie_url")
+  unboxingUrl        String?   @map("unboxing_url")
+  verificationStatus KycStatus @default(pending) @map("verification_status")
+  verifiedAt         DateTime? @map("verified_at") @db.Timestamptz
+  verifiedBy         String?   @map("verified_by") @db.Uuid
+
+  lead               Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  verifier           Profile?  @relation("VerifiedByProfile", fields: [verifiedBy], references: [id], onDelete: SetNull)
+
+  @@map("kyc_evidence")
+}
+
+model LeadNote {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId        String   @map("lead_id") @db.Uuid
+  authorClerkId String?  @map("author_clerk_id")
+  authorName    String?  @map("author_name")
+  body          String
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  lead          Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("lead_notes")
+}
+
+model Agreement {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String          @map("lead_id") @db.Uuid
+  partnerId       String?         @map("partner_id") @db.Uuid
+  version         String
+  termsText       String          @map("terms_text")
+  termsChecksum   String          @map("terms_checksum")
+  deliveryChannel String?         @map("delivery_channel")
+  sentAt          DateTime?       @map("sent_at") @db.Timestamptz
+  signedAt        DateTime?       @map("signed_at") @db.Timestamptz
+  acknowledgedAt  DateTime?       @map("acknowledged_at") @db.Timestamptz
+  status          AgreementStatus @default(draft)
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  lead            Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  partner         Partner?        @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@map("agreements")
+}
+
+model Repayment {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId        String          @map("lead_id") @db.Uuid
+  dueDate       DateTime        @map("due_date") @db.Date
+  amountDue     Decimal         @map("amount_due") @db.Decimal(12, 2)
+  amountPaid    Decimal?        @default(0) @map("amount_paid") @db.Decimal(12, 2)
+  paidAt        DateTime?       @map("paid_at") @db.Timestamptz
+  paymentMethod String?         @map("payment_method")
+  paymentRef    String?         @map("payment_ref")
+  status        RepaymentStatus @default(scheduled)
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  lead          Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, dueDate])
+  @@map("repayments")
+}
+
+model AuditEvent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  entity      String
+  entityId    String   @map("entity_id") @db.Uuid
+  eventType   String   @map("event_type")
+  payloadJson Json?    @default("{}") @map("payload_json") @db.JsonB
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  actor       Profile? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId, createdAt(sort: Desc)])
+  @@map("audit_events")
+}
+
+model Consent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  subjectId   String   @map("subject_id") @db.Uuid
+  consentType String   @map("consent_type")
+  granted     Boolean
+  lawfulBasis String?  @map("lawful_basis")
+  ipAddress   String?  @map("ip_address")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([subjectId, consentType])
+  @@map("consent")
+}
+
+model DsrRequest {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type        DsrType
+  subjectId   String    @map("subject_id") @db.Uuid
+  status      DsrStatus @default(received)
+  notes       String?
+  fulfilledAt DateTime? @map("fulfilled_at") @db.Timestamptz
+  evidenceUrl String?   @map("evidence_url")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("dsr_requests")
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventName String   @map("event_name")
+  payload   Json?    @default("{}") @db.JsonB
+  sessionId String?  @map("session_id")
+  path      String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([createdAt])
+  @@map("analytics_events")
+}
