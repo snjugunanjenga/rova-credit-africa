@@ -1,139 +1,94 @@
 import { Link } from "@tanstack/react-router";
 import { MessageCircle, Mail, MapPin, Globe } from "lucide-react";
 import { whatsappLink, WHATSAPP_NUMBER_DISPLAY, COMPANY_EMAIL } from "@/lib/format";
-import { BrandLogo } from "@/components/site/BrandLogo";
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-border bg-sidebar text-sidebar-foreground">
-      <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
-        <div className="grid gap-10 border-b border-sidebar-border pb-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr_1.2fr]">
-          <div>
-            <Link to="/" aria-label="RovaCredit home">
-              <BrandLogo light />
+    <footer className="bg-[#0b0f1a] text-white border-t border-white/5">
+      <div className="mx-auto max-w-7xl px-4 py-20 md:px-6">
+        <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.5fr]">
+          <div className="flex flex-col gap-6">
+            <Link to="/" className="flex items-center gap-3" aria-label="RovaCredit home">
+              <img src="/rova-credit-mark.svg" alt="Rova Credit" className="h-10 w-10" />
+              <span className="text-xl font-bold tracking-tight">Rova Credit Africa</span>
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-sidebar-foreground/80">
-              Empowering communities, businesses and entrepreneurs with transparent
-              smartphone financing and mobile-money native repayments.
+            <p className="max-w-sm text-base leading-7 text-white/50">
+              Expanding access to growth financing through innovative credit models, 
+              strategic partnerships, and international investment networks across the continent.
             </p>
+            <div className="flex gap-4">
+              <SocialIcon href="https://rovacredit.com" label="Website"><Globe className="h-5 w-5" /></SocialIcon>
+              <SocialIcon href={whatsappLink()} label="WhatsApp"><MessageCircle className="h-5 w-5" /></SocialIcon>
+            </div>
           </div>
 
-          <nav aria-labelledby="footer-client-heading">
-            <h3
-              id="footer-client-heading"
-              className="mb-4 text-sm font-semibold uppercase tracking-wider text-sidebar-primary"
-            >
-              Clients
+          <nav aria-labelledby="footer-solutions">
+            <h3 id="footer-solutions" className="mb-6 text-sm font-bold uppercase tracking-[0.15em] text-white/40">
+              Solutions
             </h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/marketplace" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Browse Phones</Link></li>
-              <li><a href="/#how-it-works" className="text-sidebar-foreground/80 hover:text-sidebar-primary">How it Works</a></li>
-              <li><Link to="/contact" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Credit Application</Link></li>
-              <li><Link to="/legal/credit-disclosure" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Credit Disclosure</Link></li>
+            <ul className="space-y-4 text-base text-white/60">
+              <li><Link to="/marketplace" className="hover:text-[var(--landing-purple)] transition-colors">Asset Marketplace</Link></li>
+              <li><Link to="/partners" className="hover:text-[var(--landing-purple)] transition-colors">Sales Partnerships</Link></li>
+              <li><Link to="/contact" className="hover:text-[var(--landing-purple)] transition-colors">Business Credit</Link></li>
+              <li><Link to="/about" className="hover:text-[var(--landing-purple)] transition-colors">Venture Facilitation</Link></li>
             </ul>
           </nav>
 
-          <nav aria-labelledby="footer-company-heading">
-            <h3
-              id="footer-company-heading"
-              className="mb-4 text-sm font-semibold uppercase tracking-wider text-sidebar-primary"
-            >
+          <nav aria-labelledby="footer-company">
+            <h3 id="footer-company" className="mb-6 text-sm font-bold uppercase tracking-[0.15em] text-white/40">
               Company
             </h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/about" className="text-sidebar-foreground/80 hover:text-sidebar-primary">About RovaCredit</Link></li>
-              <li><Link to="/careers" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Careers</Link></li>
-              <li><Link to="/press" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Press</Link></li>
-              <li><Link to="/sign-in" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Admin</Link></li>
+            <ul className="space-y-4 text-base text-white/60">
+              <li><Link to="/about" className="hover:text-[var(--landing-purple)] transition-colors">Our Mission</Link></li>
+              <li><Link to="/careers" className="hover:text-[var(--landing-purple)] transition-colors">Join the Team</Link></li>
+              <li><Link to="/press" className="hover:text-[var(--landing-purple)] transition-colors">Media Kit</Link></li>
+              <li><Link to="/contact" className="hover:text-[var(--landing-purple)] transition-colors">Global Network</Link></li>
             </ul>
           </nav>
 
-          <nav aria-labelledby="footer-partners-heading">
-            <h3
-              id="footer-partners-heading"
-              className="mb-4 text-sm font-semibold uppercase tracking-wider text-sidebar-primary"
-            >
-              Partners
+          <nav aria-labelledby="footer-legal">
+            <h3 id="footer-legal" className="mb-6 text-sm font-bold uppercase tracking-[0.15em] text-white/40">
+              Governance
             </h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/partners" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Become a Partner</Link></li>
-              <li><Link to="/legal/partner-agreement" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Partner Agreement</Link></li>
-              <li><Link to="/contact" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Partner Support</Link></li>
-              <li><a href="/#compliance" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Compliance Rules</a></li>
+            <ul className="space-y-4 text-base text-white/60">
+              <li><Link to="/legal/privacy" className="hover:text-[var(--landing-purple)] transition-colors">Privacy Framework</Link></li>
+              <li><Link to="/legal/data-practices" className="hover:text-[var(--landing-purple)] transition-colors">Data Stewardship</Link></li>
+              <li><Link to="/legal/terms" className="hover:text-[var(--landing-purple)] transition-colors">Operating Terms</Link></li>
+              <li><Link to="/legal/credit-disclosure" className="hover:text-[var(--landing-purple)] transition-colors">Fair Lending</Link></li>
             </ul>
           </nav>
 
-          <nav aria-labelledby="footer-legal-heading">
-            <h3
-              id="footer-legal-heading"
-              className="mb-4 text-sm font-semibold uppercase tracking-wider text-sidebar-primary"
-            >
-              Legal
+          <div className="flex flex-col gap-6">
+            <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-white/40">
+              Contact Headquarters
             </h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/legal/privacy" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Privacy Policy</Link></li>
-              <li><Link to="/legal/data-practices" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Data Practices</Link></li>
-              <li><Link to="/legal/terms" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Terms of Service</Link></li>
-              <li><Link to="/legal/cookies" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Cookie Policy</Link></li>
-              <li><Link to="/legal/credit-disclosure" className="text-sidebar-foreground/80 hover:text-sidebar-primary">Credit Disclosure</Link></li>
-            </ul>
-          </nav>
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-sidebar-primary">
-              Contact
-            </h3>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2 text-sidebar-foreground/80">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sidebar-primary" />
-                <span>Plot 2A, Nviri Ln, Kololo, Kampala</span>
+            <ul className="space-y-4 text-base text-white/60">
+              <li className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 shrink-0 text-[var(--landing-purple)]" />
+                <span>Kololo, Kampala, Uganda</span>
               </li>
               <li>
-                <a
-                  href={whatsappLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sidebar-foreground/80 hover:text-sidebar-primary"
-                >
-                  <MessageCircle className="h-4 w-4 text-sidebar-primary" />
+                <a href={whatsappLink()} className="flex items-center gap-3 hover:text-white transition-colors">
+                  <MessageCircle className="h-5 w-5 text-[var(--landing-purple)]" />
                   {WHATSAPP_NUMBER_DISPLAY}
                 </a>
               </li>
               <li>
-                <a
-                  href={`mailto:${COMPANY_EMAIL}`}
-                  className="flex items-center gap-2 text-sidebar-foreground/80 hover:text-sidebar-primary"
-                >
-                  <Mail className="h-4 w-4 text-sidebar-primary" /> {COMPANY_EMAIL}
+                <a href={`mailto:${COMPANY_EMAIL}`} className="flex items-center gap-3 hover:text-white transition-colors">
+                  <Mail className="h-5 w-5 text-[var(--landing-purple)]" />
+                  {COMPANY_EMAIL}
                 </a>
               </li>
             </ul>
-            <div className="mt-4 flex gap-3">
-              <SocialIcon href="https://rovacredit.com" label="RovaCredit website"><Globe className="h-4 w-4" /></SocialIcon>
-            </div>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-sidebar-border pt-6 text-xs text-sidebar-foreground/60 md:flex-row md:items-center md:justify-between">
-          <div>
-            © 2026 RovaCredit. All rights reserved.
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  localStorage.removeItem("rovacredit_cookie_consent_v1");
-                  window.location.reload();
-                }
-              }}
-              className="hover:text-sidebar-primary"
-            >
-              Reset cookie consent
-            </button>
-            <Link to="/sign-in" className="text-sidebar-foreground/40 hover:text-sidebar-primary">
-              Admin
-            </Link>
+        <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-white/30">
+          <p>© 2026 Rova Credit Africa. Empowering African enterprise.</p>
+          <div className="flex gap-8">
+            <Link to="/legal/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link to="/legal/terms" className="hover:text-white transition-colors">Terms</Link>
+            <Link to="/legal/cookies" className="hover:text-white transition-colors">Cookies</Link>
           </div>
         </div>
       </div>
@@ -148,7 +103,7 @@ function SocialIcon({ href, label, children }: { href: string; label: string; ch
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex h-8 w-8 items-center justify-center rounded-full border border-sidebar-border text-sidebar-foreground/70 transition-colors hover:border-sidebar-primary hover:text-sidebar-primary"
+      className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/60 transition-all hover:bg-[var(--landing-purple)] hover:text-white hover:border-[var(--landing-purple)]"
     >
       {children}
     </a>

@@ -1,211 +1,259 @@
-@import "tailwindcss" source(none);
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
-/*
- * RovaCredit Africa — fintech brand design system.
- * Primary palette grounded on indigo/purple + conversion green + signal amber.
- */
-
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-glow: var(--primary-glow);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-brand-purple: var(--brand-purple);
-  --color-brand-purple-light: var(--brand-purple-light);
-  --color-brand-green: var(--brand-green);
-  --color-brand-green-light: var(--brand-green-light);
-  --color-brand-amber: var(--brand-amber);
-  --color-brand-ink: var(--brand-ink);
-  --color-brand-bg: var(--brand-bg);
-  --color-gold: var(--gold);
-  --color-gold-foreground: var(--gold-foreground);
-  --color-whatsapp: var(--whatsapp);
-  --color-whatsapp-foreground: var(--whatsapp-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-}
-
 :root {
-  --radius: 0.75rem;
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.18 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0 0);
+  --primary: oklch(0.49 0.23 286);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.95 0.02 286);
+  --secondary-foreground: oklch(0.23 0.02 286);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.56 0 0);
+  --accent: oklch(0.95 0.02 286);
+  --accent-foreground: oklch(0.23 0.02 286);
+  --destructive: oklch(0.62 0.23 28);
+  --border: oklch(0.91 0 0);
+  --input: oklch(0.91 0 0);
+  --ring: oklch(0.49 0.23 286);
+  --chart-1: oklch(0.74 0.14 286);
+  --chart-2: oklch(0.7 0.16 210);
+  --chart-3: oklch(0.78 0.14 145);
+  --chart-4: oklch(0.64 0.18 30);
+  --chart-5: oklch(0.54 0.2 344);
+  --radius: 0.875rem;
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.18 0 0);
+  --sidebar-primary: oklch(0.49 0.23 286);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.95 0.02 286);
+  --sidebar-accent-foreground: oklch(0.23 0.02 286);
+  --sidebar-border: oklch(0.91 0 0);
+  --sidebar-ring: oklch(0.49 0.23 286);
 
-  --brand-purple: #663df2;
-  --brand-purple-light: #8c52ff;
-  --brand-green: #20c56c;
-  --brand-green-light: #37d98c;
-  --brand-amber: #fdb022;
-  --brand-ink: #0f1720;
-  --brand-bg: #f7f8fc;
-
-  --background: var(--brand-bg);
-  --foreground: var(--brand-ink);
-
-  --card: #ffffff;
-  --card-foreground: var(--brand-ink);
-
-  --popover: #ffffff;
-  --popover-foreground: var(--brand-ink);
-
-  --primary: var(--brand-purple);
-  --primary-foreground: #ffffff;
-  --primary-glow: var(--brand-purple-light);
-
-  --secondary: #edf0ff;
-  --secondary-foreground: #24235c;
-
-  --muted: #eef2ff;
-  --muted-foreground: #667085;
-
-  --accent: #e8fbf1;
-  --accent-foreground: #0f1720;
-
-  --gold: var(--brand-amber);
-  --gold-foreground: #3f2a00;
-
-  --whatsapp: var(--brand-green);
-  --whatsapp-foreground: #ffffff;
-
-  --destructive: #e11d48;
-  --destructive-foreground: #ffffff;
-
-  --success: var(--brand-green-light);
-  --success-foreground: #062112;
-
-  --warning: var(--brand-amber);
-  --warning-foreground: #402a00;
-
-  --border: #e4e7ec;
-  --input: #e4e7ec;
-  --ring: var(--brand-purple);
-
-  --chart-1: var(--brand-purple);
-  --chart-2: var(--brand-green);
-  --chart-3: #4e3ae3;
-  --chart-4: var(--brand-amber);
-  --chart-5: #1f77ff;
-
-  --sidebar: #1b2030;
-  --sidebar-foreground: #f7f8fc;
-  --sidebar-primary: var(--brand-purple-light);
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #25235e;
-  --sidebar-accent-foreground: #f7f8fc;
-  --sidebar-border: #3b3791;
-  --sidebar-ring: var(--brand-purple-light);
+  --landing-bg: #f7f8fc;
+  --landing-surface: #ffffff;
+  --landing-surface-muted: #f3f4f8;
+  --landing-border: #e4e7ec;
+  --landing-text: #101828;
+  --landing-text-muted: #667085;
+  --landing-purple: #4e3ae3;
+  --landing-purple-strong: #3526b3;
+  --landing-purple-dark: #25235e;
+  --landing-hero-start: #3b3791;
+  --landing-hero-end: #2b2873;
+  --landing-cta-green: #22c55e;
+  --landing-success: #59d37a;
+  --landing-chip-dark: #273043;
 }
 
 .dark {
-  --background: #0f1720;
-  --foreground: #f7f8fc;
-  --card: #1b2030;
-  --card-foreground: #f7f8fc;
-  --popover: #1b2030;
-  --popover-foreground: #f7f8fc;
-  --primary: #8c52ff;
-  --primary-foreground: #ffffff;
-  --primary-glow: #a49cff;
-  --secondary: #25235e;
-  --secondary-foreground: #f7f8fc;
-  --muted: #273043;
-  --muted-foreground: #c7cbdb;
-  --accent: #1c3f2e;
-  --accent-foreground: #f7f8fc;
-  --gold: #fdb022;
-  --gold-foreground: #402a00;
-  --whatsapp: #20c56c;
-  --whatsapp-foreground: #ffffff;
-  --destructive: #fb2c36;
-  --destructive-foreground: #ffffff;
-  --success: #37d98c;
-  --success-foreground: #062112;
-  --warning: #fdb022;
-  --warning-foreground: #402a00;
-  --border: #ffffff26;
-  --input: #ffffff29;
-  --ring: #8c52ff;
-  --chart-1: #8c52ff;
-  --chart-2: #20c56c;
-  --chart-3: #4e3ae3;
-  --chart-4: #fdb022;
-  --chart-5: #59d37a;
-  --sidebar: #0f1720;
-  --sidebar-foreground: #f7f8fc;
-  --sidebar-primary: #8c52ff;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #25235e;
-  --sidebar-accent-foreground: #f7f8fc;
-  --sidebar-border: #3b3791;
-  --sidebar-ring: #8c52ff;
+  --background: oklch(0.17 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.22 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.22 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.68 0.22 286);
+  --primary-foreground: oklch(0.12 0 0);
+  --secondary: oklch(0.28 0 0);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.28 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.28 0 0);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.68 0.21 24);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.68 0.22 286);
+  --sidebar: oklch(0.22 0 0);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.68 0.22 286);
+  --sidebar-primary-foreground: oklch(0.12 0 0);
+  --sidebar-accent: oklch(0.28 0 0);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.68 0.22 286);
 }
 
-@layer base {
-  * {
-    border-color: var(--color-border);
-  }
-
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
+* {
+  @apply border-[color:var(--border)] outline-[color:var(--ring)]/50;
 }
 
-@layer utilities {
-  .gradient-hero {
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--landing-bg);
+  color: var(--landing-text);
+  font-family: "Inter", sans-serif;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Manrope", sans-serif;
+  letter-spacing: -0.03em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--landing-purple) 20%, white);
+  color: var(--landing-text);
+}
+
+ @layer utilities {
+  .landing-page {
+    background: var(--landing-bg);
+    color: var(--landing-text);
+  }
+
+  .landing-section {
+    @apply mx-auto max-w-7xl px-6;
+  }
+
+  .landing-surface {
+    background: var(--landing-surface);
+  }
+
+  .landing-surface-muted {
+    background: var(--landing-surface-muted);
+  }
+
+  .landing-text-muted {
+    color: var(--landing-text-muted);
+  }
+
+  .landing-card {
+    background: var(--landing-surface);
+    border: 1px solid var(--landing-border);
+    border-radius: 1.5rem;
+    box-shadow: 0 18px 50px rgba(16, 24, 40, 0.08);
+  }
+
+  .landing-glass-card {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.08)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 24px 80px rgba(6, 11, 25, 0.32);
+    backdrop-filter: blur(22px);
+  }
+
+  .landing-dark-panel {
+    background: rgba(23, 28, 43, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 14px 34px rgba(10, 14, 27, 0.35);
+  }
+
+  .landing-button-primary {
+    background: linear-gradient(
+      135deg,
+      var(--landing-purple),
+      var(--landing-purple-strong)
+    );
+    color: white;
+    border-radius: 0.95rem;
+    box-shadow: 0 14px 28px rgba(78, 58, 227, 0.22);
+  }
+
+  .landing-button-primary:hover {
+    filter: brightness(1.04);
+  }
+
+  .landing-button-dark {
+    background: var(--landing-chip-dark);
+    color: white;
+    border-radius: 0.95rem;
+  }
+
+  .landing-button-outline {
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.95rem;
+  }
+
+  .landing-chip {
+    background: var(--landing-chip-dark);
+    color: white;
+    border-radius: 999px;
+  }
+
+  .landing-hero-bg {
     background:
-      radial-gradient(120% 120% at 0% 0%, #8c52ff44 0%, transparent 56%),
-      linear-gradient(135deg, #25235e 0%, var(--primary) 45%, var(--primary-glow) 100%);
+      radial-gradient(
+        circle at 12% 18%,
+        rgba(255, 255, 255, 0.12),
+        transparent 28%
+      ),
+      radial-gradient(
+        circle at 78% 82%,
+        rgba(91, 63, 255, 0.22),
+        transparent 24%
+      ),
+      linear-gradient(
+        180deg,
+        var(--landing-hero-start),
+        var(--landing-hero-end)
+      );
   }
-  .gradient-warning {
-    background: linear-gradient(135deg, var(--gold) 0%, #fac800 100%);
+
+  .landing-dark-section-bg {
+    background:
+      radial-gradient(
+        circle at 50% 12%,
+        rgba(91, 63, 255, 0.12),
+        transparent 26%
+      ), #1b2030;
   }
-  .shadow-elegant {
-    box-shadow: 0 10px 30px -10px color-mix(in oklab, var(--primary) 25%, transparent);
+
+  .landing-footer-bg {
+    background: #25235e;
   }
-  .shadow-card {
-    box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--foreground) 8%, transparent);
+
+  .landing-badge-popular {
+    background: linear-gradient(135deg, #ff7a45, #ff4d4f);
+    color: white;
+  }
+
+  .landing-badge-financing {
+    background: var(--landing-purple);
+    color: white;
+  }
+
+  .landing-price-success {
+    color: var(--landing-success);
+  }
+
+  .landing-divider {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .landing-image-shell {
+    background: linear-gradient(180deg, #22283b, #111827);
+  }
+}
+
+ @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

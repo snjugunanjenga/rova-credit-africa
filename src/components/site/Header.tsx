@@ -1,105 +1,133 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { HAS_CLERK } from "@/lib/clerk";
 import { Button } from "@/components/ui/button";
-import { BrandLogo } from "@/components/site/BrandLogo";
-import { whatsappLink, WHATSAPP_NUMBER_DISPLAY } from "@/lib/format";
 
 const navLinks = [
-  { to: "/", label: "Home", exact: true },
-  { to: "/", label: "Phones", hash: "phones" },
-  { to: "/", label: "How It Works", hash: "how-it-works" },
-  { to: "/partners", label: "Partners" },
-  { to: "/contact", label: "Support" },
-] as const;
+  { label: "Browse Assets", href: "/marketplace" },
+  { label: "Partnerships", href: "/partners" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
 
 export function Header() {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [solidHeader, setSolidHeader] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setSolidHeader(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
-        <Link to="/" aria-label="RovaCredit home">
-          <BrandLogo />
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        solidHeader
+          ? "border-b border-[var(--landing-border)] bg-[#111827]/88 shadow-[0_16px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl"
+          : "border-b border-white/5 bg-transparent"
+      }`}
+    >
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-6">
+        <Link to="/" className="flex items-center gap-3" aria-label="Rova Credit Africa home">
+          <img
+            src="/rova-credit-mark.svg"
+            alt="Rova Credit"
+            width={44}
+            height={44}
+            className="h-11 w-11"
+          />
+          <div className="flex flex-col">
+            <span
+              className={`text-lg font-extrabold tracking-[-0.03em] ${
+                solidHeader ? "text-[var(--landing-text)]" : "text-white"
+              }`}
+            >
+              Rova Credit Africa
+            </span>
+            <span
+              className={`text-xs font-medium ${
+                solidHeader ? "text-[var(--landing-text-muted)]" : "text-white/70"
+              }`}
+            >
+              Asset finance for growth
+            </span>
+          </div>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
-          {navLinks.map((l) => (
+        <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((link) => (
             <Link
-              key={l.to}
-              to={l.to}
-              hash={l.hash}
-              activeProps={{ className: "text-primary font-semibold" }}
-              activeOptions={{ exact: l.exact }}
-              className="text-sm text-foreground/80 transition-colors hover:text-primary"
+              key={link.href}
+              to={link.href}
+              className={`text-sm font-semibold transition-colors ${
+                solidHeader
+                  ? "text-[var(--landing-text)] hover:text-[var(--landing-purple)]"
+                  : "text-white/90 hover:text-white"
+              }`}
             >
-              {l.label}
+              {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
-          <a
-            href={whatsappLink()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-md px-2 py-1 text-sm text-whatsapp transition-colors hover:bg-accent"
-            aria-label={`WhatsApp ${WHATSAPP_NUMBER_DISPLAY}`}
-          >
-            <MessageCircle className="h-4 w-4" />
-            <span className="hidden lg:inline">{WHATSAPP_NUMBER_DISPLAY}</span>
-          </a>
-          <Button asChild size="sm" variant="default">
-            <Link to="/sign-in">
-              Sign In
-            </Link>
-          </Button>
+        <div className="hidden items-center gap-3 lg:flex">
+          {HAS_CLERK && (
+            <Button asChild variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10">
+              <Link to="/sign-in">Sign In</Link>
+            </Button>
+          )}
         </div>
 
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-md md:hidden"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setIsOpen((open) => !open)}
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-full border lg:hidden ${
+            solidHeader
+              ? "border-[var(--landing-border)] bg-gray-800 text-[var(--landing-text)]"
+              : "border-white/15 bg-white/10 text-white"
+          }`}
+          aria-expanded={isOpen}
           aria-label="Toggle menu"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
         >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {open && (
-        <div id="mobile-nav" className="border-t border-border bg-background md:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3" aria-label="Mobile primary">
-            {navLinks.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                hash={l.hash}
-                onClick={() => setOpen(false)}
-                activeProps={{ className: "bg-accent text-primary font-semibold" }}
-                activeOptions={{ exact: l.exact }}
-                className="rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-accent"
-              >
-                {l.label}
-              </Link>
-            ))}
-            <a
-              href={whatsappLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-whatsapp"
-            >
-              <MessageCircle className="h-4 w-4" /> {WHATSAPP_NUMBER_DISPLAY}
-            </a>
-            <Button asChild size="sm" className="mt-1 w-full">
-              <Link to="/sign-in" onClick={() => setOpen(false)}>
-                Sign In
-              </Link>
-            </Button>
-          </nav>
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen ? (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            className="border-t border-[var(--landing-border)] bg-[#111827] shadow-[0_24px_60px_rgba(0,0,0,0.4)] lg:hidden"
+          >
+            <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--landing-text)] transition-colors hover:bg-[var(--landing-surface-muted)] hover:text-[var(--landing-purple)]"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              {HAS_CLERK && (
+                <div className="mt-2 flex flex-col gap-3 border-t border-[var(--landing-border)] pt-4">
+                  <Button asChild variant="outline" className="w-full border-white/10 bg-white/5 text-white">
+                    <Link to="/sign-in" onClick={() => setIsOpen(false)}>Sign In</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </header>
   );
 }
