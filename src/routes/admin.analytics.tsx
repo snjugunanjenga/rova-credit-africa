@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/database/client";
 import { Section, Stat } from "./admin";
 
 export const Route = createFileRoute("/admin/analytics")({
@@ -11,7 +11,7 @@ function AdminAnalytics() {
   const { data: leads = [] } = useQuery({
     queryKey: ["analytics-leads"],
     queryFn: async () => {
-      const { data } = await supabase.from("leads").select("source, status, country");
+      const { data } = await db.from("leads").select("source, status, country");
       return data ?? [];
     },
   });

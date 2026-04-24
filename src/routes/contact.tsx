@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { supabase } from "@/integrations/supabase/client";
+import { insertLead } from "@/integrations/database/client";
 import { whatsappLink, WHATSAPP_NUMBER_DISPLAY, COMPANY_EMAIL } from "@/lib/format";
 
 export const Route = createFileRoute("/contact")({
@@ -48,22 +48,22 @@ function ContactPage() {
 
   const onSubmit = async (v: Values) => {
     setSubmitting(true);
-    const { error } = await supabase.from("leads").insert({
-      source: "direct",
-      full_name: v.full_name,
-      email: v.email,
-      phone: v.phone || null,
-      subject: v.subject,
-      message: v.message,
-      consent_given: v.consent_given,
-    });
-    setSubmitting(false);
-    if (error) {
+    try {
+      await insertLead({
+        source: "direct",
+        full_name: v.full_name,
+        email: v.email,
+        phone: v.phone || null,
+        subject: v.subject,
+        message: v.message,
+        consent_given: v.consent_given,
+      });
+      toast.success("Message sent! We'll respond within 1 business day.");
+      form.reset();
+    } catch {
       toast.error("Could not send. Please try again.");
-      return;
     }
-    toast.success("Message sent! We'll respond within 1 business day.");
-    form.reset();
+    setSubmitting(false);
   };
 
   return (

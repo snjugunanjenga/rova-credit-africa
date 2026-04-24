@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchProducts } from "@/integrations/database/client";
 
 export const Route = createFileRoute("/marketplace")({
   head: () => ({
@@ -36,14 +36,7 @@ function MarketplacePage() {
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["products"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("products")
-        .select("*")
-        .eq("available", true)
-        .order("sort_order", { ascending: true });
-      return (data ?? []) as unknown as ProductCardData[];
-    },
+    queryFn: () => fetchProducts({ available: true }),
   });
 
   const brands = useMemo(() => Array.from(new Set(data.map((p) => p.brand))).sort(), [data]);

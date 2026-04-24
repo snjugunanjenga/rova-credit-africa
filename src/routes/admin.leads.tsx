@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { MessageCircle, MapPin, FileSignature } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/database/client";
 import { whatsappLink, formatUGX } from "@/lib/format";
 import { Section } from "./admin";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +30,7 @@ function AdminLeads() {
   const { data = [] } = useQuery({
     queryKey: ["admin-leads"],
     queryFn: async () => {
-      const { data } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
+      const { data } = await db.from("leads").select("*").order("created_at", { ascending: false });
       return data ?? [];
     },
   });
@@ -41,7 +41,7 @@ function AdminLeads() {
   );
 
   const updateStatus = async (id: string, status: Status) => {
-    const { error } = await supabase.from("leads").update({ status }).eq("id", id);
+    const { error } = await db.from("leads").update({ status }).eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Updated"); qc.invalidateQueries({ queryKey: ["admin-leads"] }); }
   };

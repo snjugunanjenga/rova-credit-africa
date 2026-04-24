@@ -13,7 +13,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchProductById, fetchRecommendations } from "@/integrations/database/client";
+import type { Product } from "@/integrations/database/types";
 import { formatUGX, whatsappLink } from "@/lib/format";
 
 export const Route = createFileRoute("/marketplace/$id")({
@@ -44,57 +45,16 @@ function ProductPage() {
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("id", id)
-        .maybeSingle();
-      if (error) throw error;
+      const data = await fetchProductById(id);
       if (!data) throw notFound();
       return data;
     },
   });
 
-  // Recommendations: same category, then same brand, ±25% price, exclude self.
   const { data: recommendations = [] } = useQuery({
     queryKey: ["recommendations", id, product?.category, product?.brand, product?.asset_price],
     enabled: !!product,
-    queryFn: async () => {
-      if (!product) return [];
-      const minPrice = Math.round(product.asset_price * 0.75);
-      const maxPrice = Math.round(product.asset_price * 1.25);
-      // Try category + price band first
-      const { data: byCategory } = await supabase
-        .from("products")
-        .select("*")
-        .eq("available", true)
-        .eq("category", product.category)
-        .neq("id", product.id)
-        .gte("asset_price", minPrice)
-        .lte("asset_price", maxPrice)
-        .order("sort_order", { ascending: true })
-        .limit(6);
-      let results = byCategory ?? [];
-      if (results.length < 4) {
-        const { data: byBrand } = await supabase
-          .from("products")
-          .select("*")
-          .eq("available", true)
-          .eq("brand", product.brand)
-          .neq("id", product.id)
-          .order("sort_order", { ascending: true })
-          .limit(6);
-        const seen = new Set(results.map((r) => r.id));
-        for (const r of byBrand ?? []) {
-          if (!seen.has(r.id)) {
-            results.push(r);
-            seen.add(r.id);
-          }
-          if (results.length >= 6) break;
-        }
-      }
-      return results.slice(0, 6) as unknown as ProductCardData[];
-    },
+    queryFn: () => (product ? fetchRecommendations(product as Product) : []),
   });
 
   if (isLoading) {

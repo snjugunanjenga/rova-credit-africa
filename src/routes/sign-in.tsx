@@ -5,7 +5,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { findProfileByClerkId, insertProfile, countRoles, insertRole } from "@/integrations/database/client";
 import { setLocalAdmin, getLocalAdmin } from "@/lib/local-admin";
 
 export const Route = createFileRoute("/sign-in")({
@@ -28,35 +28,24 @@ function SignInPage() {
     if (!email) return;
     setSubmitting(true);
 
-    // Mirror user into profiles table (Clerk frontend-only equivalent).
     const clerkLikeId = `local_${email.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
-    const { data: existing } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("clerk_user_id", clerkLikeId)
-      .maybeSingle();
+    const existing = await findProfileByClerkId(clerkLikeId);
 
     let profileId = existing?.id;
     if (!profileId) {
-      const { data: created, error } = await supabase
-        .from("profiles")
-        .insert({ clerk_user_id: clerkLikeId, email, full_name: name || email })
-        .select("id")
-        .single();
-      if (error) {
+      try {
+        const created = await insertProfile({ clerk_user_id: clerkLikeId, email, full_name: name || email });
+        profileId = created.id;
+      } catch {
         setSubmitting(false);
         toast.error("Sign-in failed");
         return;
       }
-      profileId = created.id;
     }
 
-    // First user automatically becomes admin_owner.
-    const { count } = await supabase
-      .from("user_roles")
-      .select("*", { count: "exact", head: true });
-    if (!count || count === 0) {
-      await supabase.from("user_roles").insert({ profile_id: profileId, role: "admin_owner" });
+    const roleCount = await countRoles();
+    if (roleCount === 0) {
+      await insertRole({ profile_id: profileId, role: "admin_owner" });
       toast.success("Welcome! You are the first admin (admin_owner).");
     }
 

@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/database/client";
 import { formatUGX } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,14 +35,14 @@ function AdminProducts() {
   const { data = [], isLoading } = useQuery({
     queryKey: ["admin-products"],
     queryFn: async () => {
-      const { data } = await supabase.from("products").select("*").order("sort_order");
+      const { data } = await db.from("products").select("*").order("sort_order");
       return (data ?? []) as unknown as Row[];
     },
   });
 
   const remove = async (id: string) => {
     if (!confirm("Delete this product?")) return;
-    const { error } = await supabase.from("products").delete().eq("id", id);
+    const { error } = await db.from("products").delete().eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Deleted"); qc.invalidateQueries({ queryKey: ["admin-products"] }); }
   };
@@ -61,8 +61,8 @@ function AdminProducts() {
       specifications: editing.specifications && Object.keys(editing.specifications).length > 0 ? editing.specifications : null,
     };
     const { error } = editing.id
-      ? await supabase.from("products").update(payload).eq("id", editing.id)
-      : await supabase.from("products").insert(payload);
+      ? await db.from("products").update(payload).eq("id", editing.id)
+      : await db.from("products").insert(payload);
     if (error) toast.error(error.message);
     else { toast.success("Saved"); setEditing(null); qc.invalidateQueries({ queryKey: ["admin-products"] }); }
   };

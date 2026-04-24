@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/database/client";
 import { Section } from "./admin";
 
 export const Route = createFileRoute("/admin/system")({
@@ -12,13 +12,13 @@ function AdminSystem() {
   const { data, isLoading } = useQuery({
     queryKey: ["system-status"],
     queryFn: async () => {
-      const { count, error } = await supabase.from("products").select("*", { count: "exact", head: true });
+      const { count, error } = await db.from("products").select("*", { count: "exact", head: true });
       return { connected: !error, products: count ?? 0, error: error?.message };
     },
   });
 
   return (
-    <Section title="System status" desc="Lovable Cloud connectivity">
+    <Section title="System status" desc="Database connectivity">
       <div className="rounded-xl border border-border bg-card p-5">
         {isLoading ? <p>Checking…</p> : (
           <div className="space-y-2">

@@ -12,7 +12,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { ProductCard } from "@/components/site/ProductCard";
 import type { ProductCardData } from "@/components/site/ProductCard";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchProducts } from "@/integrations/database/client";
 import { formatUGX, whatsappLink } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
@@ -67,15 +67,7 @@ function HomePage() {
   const [loanWeeks, setLoanWeeks] = useState(52);
   const { data: featured = [] } = useQuery({
     queryKey: ["featured-products"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("products")
-        .select("*")
-        .eq("available", true)
-        .order("sort_order", { ascending: true })
-        .limit(8);
-      return (data ?? []) as unknown as ProductCardData[];
-    },
+    queryFn: () => fetchProducts({ available: true, limit: 8 }),
   });
 
   const weeklyPayment = useMemo(

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { supabase } from "@/integrations/supabase/client";
+import { insertLead } from "@/integrations/database/client";
 import { whatsappLink, formatUGX } from "@/lib/format";
 import {
   computeEligibility,
@@ -140,14 +140,17 @@ export function LeadModal({ open, onOpenChange, productId, productName, productP
       employment_type: values.employment,
     };
 
-    const { data: inserted, error } = await supabase
-      .from("leads")
-      .insert(insertPayload)
-      .select("id")
-      .maybeSingle();
+    let inserted: { id: string } | null = null;
+    try {
+      inserted = await insertLead(insertPayload);
+    } catch {
+      setSubmitting(false);
+      toast.error("Could not submit. Please try again.");
+      return;
+    }
     setSubmitting(false);
 
-    if (error || !inserted) {
+    if (!inserted) {
       toast.error("Could not submit. Please try again.");
       return;
     }

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/database/client";
 import { Section } from "./admin";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,25 +21,25 @@ function AdminUsers() {
   const { data: profiles = [] } = useQuery({
     queryKey: ["admin-profiles"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+      const { data } = await db.from("profiles").select("*").order("created_at", { ascending: false });
       return data ?? [];
     },
   });
   const { data: roles = [] } = useQuery({
     queryKey: ["admin-roles"],
     queryFn: async () => {
-      const { data } = await supabase.from("user_roles").select("*");
+      const { data } = await db.from("user_roles").select("*");
       return data ?? [];
     },
   });
 
   const grant = async (profile_id: string, role: typeof ROLES[number]) => {
-    const { error } = await supabase.from("user_roles").insert({ profile_id, role });
+    const { error } = await db.from("user_roles").insert({ profile_id, role });
     if (error) toast.error(error.message);
     else { toast.success("Role granted"); qc.invalidateQueries({ queryKey: ["admin-roles"] }); }
   };
   const revoke = async (id: string) => {
-    const { error } = await supabase.from("user_roles").delete().eq("id", id);
+    const { error } = await db.from("user_roles").delete().eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Revoked"); qc.invalidateQueries({ queryKey: ["admin-roles"] }); }
   };

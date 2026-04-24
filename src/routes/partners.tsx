@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { insertLead } from "@/integrations/database/client";
 import { detectLocation } from "@/lib/geolocation";
 import { leadRefFromId } from "@/lib/eligibility";
 
@@ -111,41 +111,46 @@ function PartnersPage() {
   const onSubmit = async (v: Values) => {
     setSubmitting(true);
     const acceptedAt = new Date().toISOString();
-    const { data: inserted, error } = await supabase.from("leads").insert({
-      source: "partner",
-      full_name: v.full_name,
-      email: v.email,
-      phone: v.phone,
-      country: v.country,
-      subject: `${v.company} — ${v.business_type}`,
-      message: v.message ?? null,
-      consent_given: v.consent_given,
-      latitude: geo?.lat ?? null,
-      longitude: geo?.lng ?? null,
-      location_label: v.business_address || geo?.label || null,
-      agreement_version: AGREEMENT_VERSION,
-      agreement_accepted_at: acceptedAt,
-      agreement_signatory_name: v.signatory_name,
-      metadata: {
-        company: v.company,
-        business_type: v.business_type,
-        monthly_volume: v.monthly_volume ?? null,
-        tin: v.tin ?? null,
-        national_id: v.national_id ?? null,
-        momo_merchant_code: v.momo_merchant_code ?? null,
-        foot_traffic: v.foot_traffic ?? null,
-      },
-    }).select("id").maybeSingle();
-    setSubmitting(false);
-    if (error || !inserted) {
+    try {
+      const inserted = await insertLead({
+        source: "partner",
+        full_name: v.full_name,
+        email: v.email,
+        phone: v.phone,
+        country: v.country,
+        subject: `${v.company} — ${v.business_type}`,
+        message: v.message ?? null,
+        consent_given: v.consent_given,
+        latitude: geo?.lat ?? null,
+        longitude: geo?.lng ?? null,
+        location_label: v.business_address || geo?.label || null,
+        agreement_version: AGREEMENT_VERSION,
+        agreement_accepted_at: acceptedAt,
+        agreement_signatory_name: v.signatory_name,
+        metadata: {
+          company: v.company,
+          business_type: v.business_type,
+          monthly_volume: v.monthly_volume ?? null,
+          tin: v.tin ?? null,
+          national_id: v.national_id ?? null,
+          momo_merchant_code: v.momo_merchant_code ?? null,
+          foot_traffic: v.foot_traffic ?? null,
+        },
+      });
+      if (!inserted) {
+        toast.error("Could not submit. Try again.");
+        setSubmitting(false);
+        return;
+      }
+      toast.success(`Application submitted (${leadRefFromId(inserted.id)}). Our partnerships team will be in touch within 1 business day.`);
+      form.reset();
+      setStep(1);
+      setGeo(null);
+      setGeoStatus("idle");
+    } catch {
       toast.error("Could not submit. Try again.");
-      return;
     }
-    toast.success(`Application submitted (${leadRefFromId(inserted.id)}). Our partnerships team will be in touch within 1 business day.`);
-    form.reset();
-    setStep(1);
-    setGeo(null);
-    setGeoStatus("idle");
+    setSubmitting(false);
   };
 
   return (
