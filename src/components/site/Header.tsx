@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, X, MessageCircle, Smartphone } from "lucide-react";
+import { Menu, X, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/site/BrandLogo";
 import { whatsappLink, WHATSAPP_NUMBER_DISPLAY } from "@/lib/format";
 
 const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/marketplace", label: "Marketplace" },
+  { to: "/", label: "Home", exact: true },
+  { to: "/", label: "Phones", hash: "phones" },
+  { to: "/", label: "How It Works", hash: "how-it-works" },
   { to: "/partners", label: "Partners" },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
+  { to: "/contact", label: "Support" },
 ] as const;
 
 export function Header() {
@@ -18,23 +19,18 @@ export function Header() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
-        <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Smartphone className="h-5 w-5" />
-          </div>
-          <span className="text-lg leading-none">
-            RovaCredit
-            <span className="ml-1 text-gold">Africa</span>
-          </span>
+        <Link to="/" aria-label="RovaCredit home">
+          <BrandLogo />
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
           {navLinks.map((l) => (
             <Link
               key={l.to}
               to={l.to}
+              hash={l.hash}
               activeProps={{ className: "text-primary font-semibold" }}
-              activeOptions={{ exact: l.to === "/" }}
+              activeOptions={{ exact: l.exact }}
               className="text-sm text-foreground/80 transition-colors hover:text-primary"
             >
               {l.label}
@@ -53,11 +49,11 @@ export function Header() {
             <MessageCircle className="h-4 w-4" />
             <span className="hidden lg:inline">{WHATSAPP_NUMBER_DISPLAY}</span>
           </a>
-          <Link to="/sign-in">
-            <Button size="sm" variant="default">
+          <Button asChild size="sm" variant="default">
+            <Link to="/sign-in">
               Sign In
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         <button
@@ -65,21 +61,24 @@ export function Header() {
           className="flex h-10 w-10 items-center justify-center rounded-md md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
+          aria-expanded={open}
+          aria-controls="mobile-nav"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="border-t border-border bg-background md:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
+        <div id="mobile-nav" className="border-t border-border bg-background md:hidden">
+          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3" aria-label="Mobile primary">
             {navLinks.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
+                hash={l.hash}
                 onClick={() => setOpen(false)}
                 activeProps={{ className: "bg-accent text-primary font-semibold" }}
-                activeOptions={{ exact: l.to === "/" }}
+                activeOptions={{ exact: l.exact }}
                 className="rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-accent"
               >
                 {l.label}
@@ -93,11 +92,11 @@ export function Header() {
             >
               <MessageCircle className="h-4 w-4" /> {WHATSAPP_NUMBER_DISPLAY}
             </a>
-            <Link to="/sign-in" onClick={() => setOpen(false)} className="mt-1">
-              <Button size="sm" className="w-full">
+            <Button asChild size="sm" className="mt-1 w-full">
+              <Link to="/sign-in" onClick={() => setOpen(false)}>
                 Sign In
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </nav>
         </div>
       )}

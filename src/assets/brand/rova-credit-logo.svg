@@ -1,0 +1,7 @@
+<svg width="220" height="56" viewBox="0 0 220 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="56" height="56" rx="14" fill="#25235E"/>
+  <path d="M12 13H34C40.6 13 46 18.4 46 25C46 30.5 42.2 35.1 37 36.5L45 44H36.7L29.7 37.3H20.5V44H12V13ZM20.5 29.5H34C36.4 29.5 38.3 27.5 38.3 25C38.3 22.5 36.4 20.5 34 20.5H20.5V29.5Z" fill="white"/>
+  <path d="M18 44L26.5 28.5H35L26.5 44H18Z" fill="#20C56C"/>
+  <text x="70" y="27" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="21" font-weight="800" fill="#0F1720">RovaCredit</text>
+  <text x="70" y="45" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="600" fill="#663DF2">Africa</text>
+</svg>

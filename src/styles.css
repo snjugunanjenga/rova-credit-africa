@@ -5,9 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * RovaCredit Africa — Pan-African fintech design system.
- * Deep emerald primary + warm gold accent + warm off-white background.
- * All colors in oklch.
+ * RovaCredit Africa — fintech brand design system.
+ * Primary palette grounded on indigo/purple + conversion green + signal amber.
  */
 
 @theme inline {
@@ -34,6 +33,13 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-purple-light: var(--brand-purple-light);
+  --color-brand-green: var(--brand-green);
+  --color-brand-green-light: var(--brand-green-light);
+  --color-brand-amber: var(--brand-amber);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-bg: var(--brand-bg);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
   --color-whatsapp: var(--whatsapp);
@@ -66,105 +72,113 @@
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.985 0.005 95);
-  --foreground: oklch(0.18 0.02 160);
+  --brand-purple: #663df2;
+  --brand-purple-light: #8c52ff;
+  --brand-green: #20c56c;
+  --brand-green-light: #37d98c;
+  --brand-amber: #fdb022;
+  --brand-ink: #0f1720;
+  --brand-bg: #f7f8fc;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 160);
+  --background: var(--brand-bg);
+  --foreground: var(--brand-ink);
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 160);
+  --card: #ffffff;
+  --card-foreground: var(--brand-ink);
 
-  --primary: oklch(0.42 0.13 160);
-  --primary-foreground: oklch(0.985 0.005 95);
-  --primary-glow: oklch(0.58 0.15 160);
+  --popover: #ffffff;
+  --popover-foreground: var(--brand-ink);
 
-  --secondary: oklch(0.96 0.01 160);
-  --secondary-foreground: oklch(0.25 0.05 160);
+  --primary: var(--brand-purple);
+  --primary-foreground: #ffffff;
+  --primary-glow: var(--brand-purple-light);
 
-  --muted: oklch(0.96 0.008 95);
-  --muted-foreground: oklch(0.5 0.02 160);
+  --secondary: #edf0ff;
+  --secondary-foreground: #24235c;
 
-  --accent: oklch(0.92 0.04 160);
-  --accent-foreground: oklch(0.25 0.05 160);
+  --muted: #eef2ff;
+  --muted-foreground: #667085;
 
-  --gold: oklch(0.78 0.14 75);
-  --gold-foreground: oklch(0.22 0.04 75);
+  --accent: #e8fbf1;
+  --accent-foreground: #0f1720;
 
-  --whatsapp: oklch(0.65 0.18 145);
-  --whatsapp-foreground: oklch(1 0 0);
+  --gold: var(--brand-amber);
+  --gold-foreground: #3f2a00;
 
-  --destructive: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.985 0.005 95);
+  --whatsapp: var(--brand-green);
+  --whatsapp-foreground: #ffffff;
 
-  --success: oklch(0.6 0.15 155);
-  --success-foreground: oklch(0.985 0.005 95);
+  --destructive: #e11d48;
+  --destructive-foreground: #ffffff;
 
-  --warning: oklch(0.75 0.15 70);
-  --warning-foreground: oklch(0.2 0.05 70);
+  --success: var(--brand-green-light);
+  --success-foreground: #062112;
 
-  --border: oklch(0.9 0.01 160);
-  --input: oklch(0.92 0.01 160);
-  --ring: oklch(0.42 0.13 160);
+  --warning: var(--brand-amber);
+  --warning-foreground: #402a00;
 
-  --chart-1: oklch(0.42 0.13 160);
-  --chart-2: oklch(0.78 0.14 75);
-  --chart-3: oklch(0.55 0.15 220);
-  --chart-4: oklch(0.6 0.18 30);
-  --chart-5: oklch(0.5 0.18 290);
+  --border: #e4e7ec;
+  --input: #e4e7ec;
+  --ring: var(--brand-purple);
 
-  --sidebar: oklch(0.22 0.04 160);
-  --sidebar-foreground: oklch(0.95 0.01 95);
-  --sidebar-primary: oklch(0.78 0.14 75);
-  --sidebar-primary-foreground: oklch(0.18 0.02 160);
-  --sidebar-accent: oklch(0.3 0.05 160);
-  --sidebar-accent-foreground: oklch(0.95 0.01 95);
-  --sidebar-border: oklch(0.3 0.04 160);
-  --sidebar-ring: oklch(0.78 0.14 75);
+  --chart-1: var(--brand-purple);
+  --chart-2: var(--brand-green);
+  --chart-3: #4e3ae3;
+  --chart-4: var(--brand-amber);
+  --chart-5: #1f77ff;
+
+  --sidebar: #1b2030;
+  --sidebar-foreground: #f7f8fc;
+  --sidebar-primary: var(--brand-purple-light);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #25235e;
+  --sidebar-accent-foreground: #f7f8fc;
+  --sidebar-border: #3b3791;
+  --sidebar-ring: var(--brand-purple-light);
 }
 
 .dark {
-  --background: oklch(0.16 0.02 160);
-  --foreground: oklch(0.96 0.01 95);
-  --card: oklch(0.22 0.03 160);
-  --card-foreground: oklch(0.96 0.01 95);
-  --popover: oklch(0.22 0.03 160);
-  --popover-foreground: oklch(0.96 0.01 95);
-  --primary: oklch(0.6 0.15 160);
-  --primary-foreground: oklch(0.12 0.02 160);
-  --primary-glow: oklch(0.7 0.16 160);
-  --secondary: oklch(0.28 0.04 160);
-  --secondary-foreground: oklch(0.96 0.01 95);
-  --muted: oklch(0.28 0.03 160);
-  --muted-foreground: oklch(0.7 0.02 160);
-  --accent: oklch(0.32 0.05 160);
-  --accent-foreground: oklch(0.96 0.01 95);
-  --gold: oklch(0.78 0.14 75);
-  --gold-foreground: oklch(0.18 0.04 75);
-  --whatsapp: oklch(0.65 0.18 145);
-  --whatsapp-foreground: oklch(1 0 0);
-  --destructive: oklch(0.62 0.21 27);
-  --destructive-foreground: oklch(0.985 0.005 95);
-  --success: oklch(0.65 0.15 155);
-  --success-foreground: oklch(0.12 0.02 160);
-  --warning: oklch(0.75 0.15 70);
-  --warning-foreground: oklch(0.18 0.04 70);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.6 0.15 160);
-  --chart-1: oklch(0.6 0.15 160);
-  --chart-2: oklch(0.78 0.14 75);
-  --chart-3: oklch(0.65 0.15 220);
-  --chart-4: oklch(0.7 0.18 30);
-  --chart-5: oklch(0.6 0.18 290);
-  --sidebar: oklch(0.18 0.03 160);
-  --sidebar-foreground: oklch(0.96 0.01 95);
-  --sidebar-primary: oklch(0.78 0.14 75);
-  --sidebar-primary-foreground: oklch(0.18 0.02 160);
-  --sidebar-accent: oklch(0.28 0.04 160);
-  --sidebar-accent-foreground: oklch(0.96 0.01 95);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.78 0.14 75);
+  --background: #0f1720;
+  --foreground: #f7f8fc;
+  --card: #1b2030;
+  --card-foreground: #f7f8fc;
+  --popover: #1b2030;
+  --popover-foreground: #f7f8fc;
+  --primary: #8c52ff;
+  --primary-foreground: #ffffff;
+  --primary-glow: #a49cff;
+  --secondary: #25235e;
+  --secondary-foreground: #f7f8fc;
+  --muted: #273043;
+  --muted-foreground: #c7cbdb;
+  --accent: #1c3f2e;
+  --accent-foreground: #f7f8fc;
+  --gold: #fdb022;
+  --gold-foreground: #402a00;
+  --whatsapp: #20c56c;
+  --whatsapp-foreground: #ffffff;
+  --destructive: #fb2c36;
+  --destructive-foreground: #ffffff;
+  --success: #37d98c;
+  --success-foreground: #062112;
+  --warning: #fdb022;
+  --warning-foreground: #402a00;
+  --border: #ffffff26;
+  --input: #ffffff29;
+  --ring: #8c52ff;
+  --chart-1: #8c52ff;
+  --chart-2: #20c56c;
+  --chart-3: #4e3ae3;
+  --chart-4: #fdb022;
+  --chart-5: #59d37a;
+  --sidebar: #0f1720;
+  --sidebar-foreground: #f7f8fc;
+  --sidebar-primary: #8c52ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #25235e;
+  --sidebar-accent-foreground: #f7f8fc;
+  --sidebar-border: #3b3791;
+  --sidebar-ring: #8c52ff;
 }
 
 @layer base {
@@ -181,10 +195,12 @@
 
 @layer utilities {
   .gradient-hero {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-glow) 100%);
+    background:
+      radial-gradient(120% 120% at 0% 0%, #8c52ff44 0%, transparent 56%),
+      linear-gradient(135deg, #25235e 0%, var(--primary) 45%, var(--primary-glow) 100%);
   }
-  .gradient-gold {
-    background: linear-gradient(135deg, var(--gold) 0%, oklch(0.85 0.16 80) 100%);
+  .gradient-warning {
+    background: linear-gradient(135deg, var(--gold) 0%, #fac800 100%);
   }
   .shadow-elegant {
     box-shadow: 0 10px 30px -10px color-mix(in oklab, var(--primary) 25%, transparent);

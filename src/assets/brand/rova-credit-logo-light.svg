@@ -1,0 +1,8 @@
+<svg width="420" height="96" viewBox="0 0 420 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="96" height="96" rx="24" fill="#FFFFFF"/>
+  <path d="M25 20H58C73 20 84 30 84 44C84 59 73 69 58 69H49L71 84H53L25 65V20Z" fill="#24235E"/>
+  <path d="M43 35H57C63 35 68 38 68 44C68 49 63 53 57 53H43V35Z" fill="#8C52FF"/>
+  <path d="M56 58L78 79H65L45 61L56 58Z" fill="#20C56C"/>
+  <text x="112" y="48" font-size="35" font-family="Inter, Arial, sans-serif" font-weight="800" fill="#FFFFFF">RovaCredit</text>
+  <text x="112" y="74" font-size="20" font-family="Inter, Arial, sans-serif" font-weight="600" fill="#37D98C">Africa</text>
+</svg>

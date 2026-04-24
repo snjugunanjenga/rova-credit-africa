@@ -25,8 +25,10 @@ export function ProductCard({
   product: ProductCardData;
   onApply?: (p: ProductCardData) => void;
 }) {
+  const buyLabel = `Buy ${product.name} on credit`;
+
   return (
-    <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant">
+    <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
       <Link
         to="/marketplace/$id"
         params={{ id: product.id }}
@@ -51,7 +53,7 @@ export function ProductCard({
         {product.badges && product.badges.length > 0 && (
           <div className="absolute left-2 top-2 flex flex-wrap gap-1">
             {product.badges.slice(0, 2).map((b) => (
-              <Badge key={b} className="bg-gold text-gold-foreground hover:bg-gold">
+              <Badge key={b} className="bg-warning text-warning-foreground hover:bg-warning/90">
                 {b}
               </Badge>
             ))}
@@ -66,7 +68,7 @@ export function ProductCard({
               <h3 className="line-clamp-1 font-semibold text-foreground">{product.name}</h3>
             </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Star className="h-3 w-3 fill-gold text-gold" />
+              <Star className="h-3 w-3 fill-warning text-warning" />
               {product.rating ?? "4.5"}
             </div>
           </div>
@@ -83,12 +85,13 @@ export function ProductCard({
         <div className="mt-auto pt-2">
           <p className="text-lg font-bold text-primary">{formatUGX(product.asset_price)}</p>
           <p className="text-xs text-muted-foreground">
-            From <span className="font-semibold text-foreground">{formatUGX(product.down_payment)}</span> down · MoMo / Airtel
+            From <span className="font-semibold text-primary">{formatUGX(product.down_payment)}</span> down · MoMo / Airtel
           </p>
           {onApply ? (
             <Button
               size="sm"
               className="mt-3 w-full"
+              aria-label={buyLabel}
               onClick={(e) => {
                 e.preventDefault();
                 onApply(product);
@@ -97,11 +100,11 @@ export function ProductCard({
               <ShoppingCart className="mr-2 h-4 w-4" /> Buy on Credit
             </Button>
           ) : (
-            <Link to="/marketplace/$id" params={{ id: product.id }} className="mt-3 block">
-              <Button size="sm" className="w-full">
+            <Button size="sm" asChild className="mt-3 w-full" aria-label={buyLabel}>
+              <Link to="/marketplace/$id" params={{ id: product.id }}>
                 <ShoppingCart className="mr-2 h-4 w-4" /> Buy on Credit
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           )}
         </div>
       </div>
