@@ -7,6 +7,7 @@ import { landingPage } from './landingPage'
 import { partnerSpotlight } from './partnerSpotlight'
 import { siteSettings } from './siteSettings'
 import { announcement } from './announcement'
+import { phone } from './phone'
 
 export const schemaTypes = [
   productPage,
@@ -18,4 +19,5 @@ export const schemaTypes = [
   partnerSpotlight,
   siteSettings,
   announcement,
+  phone,
 ]

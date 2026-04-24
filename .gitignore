@@ -16,9 +16,22 @@ dist-ssr
 .nitro
 *.local
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+
+# Sanity Studio build
+dist/
 
 # Editor directories and files
 .vscode/*
